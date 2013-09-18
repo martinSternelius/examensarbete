@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -14,5 +14,7 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
-    url(r'^registration/', include('registration.urls', namespace="registration")),
+    url(r'^login/', 'django.contrib.auth.views.login' , name='login'),
+    url(r'^logout/', 'django.contrib.auth.views.logout' , name='logout'),
+    url(r'^registration/', 'registration.views.register', name='register'),
 )
