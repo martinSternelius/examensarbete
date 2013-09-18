@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*- 
 
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
-from django.views.generic.edit import CreateView
 from django.shortcuts import render
-
-class CreateUserView(CreateView):
-    model = User
+from django.http import HttpResponseRedirect
 
 def register(request):
-    form = UserCreationForm()
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/")
+    else:
+        form = UserCreationForm()
+    
     return render(request, 'registration/register.html', {'form' : form})
+        
