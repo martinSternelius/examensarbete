@@ -213,4 +213,5 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
-mysite/localsettings.py
+
+examensarbete/localsettings.py
