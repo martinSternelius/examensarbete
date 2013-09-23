@@ -2,6 +2,8 @@
 from django.db import models
 from django.db.models.fields import CharField
 from django.contrib.auth.models import User
+from django.contrib.localflavor.se.se_counties import COUNTY_CHOICES
+import re
 
 def generate_rooms_choices(max_rooms_choice):
     '''
@@ -10,7 +12,7 @@ def generate_rooms_choices(max_rooms_choice):
     
     rooms_choices = list()
     
-    for x in range(2, (max_rooms_choice +1) * 2):
+    for x in range(2, (max_rooms_choice + 1) * 2):
         if(x % 2 > 0):
             floated_x = float(x)
             choice = floated_x/2
@@ -30,6 +32,21 @@ HOUSING_TYPE_CHOICES = (
     (4, 'Villa/Radhus')
 )
 
+def get_fields_by_prefix(prefix):
+    '''
+    Get fields names of the Listing model that have the provided prefix
+    '''
+    members = [attr for attr in dir(Listing()) if not callable(attr) and not attr.startswith("__")]
+    fields = []
+    for member in members:
+        pattern = re.compile(prefix)
+        if re.match(pattern, member):
+            fields.append(member)
+        
+    return fields
+    
+    
+
 BRF_STATUS_CHOICES = ((0, 'Ingen förening bildad'), (1, 'Förening Bildad'), (2, 'Blivande Bostadsrätt'))
 BRF_WANTED_STATUS_CHOICES = ((0, 'Nej'), (1, 'Förening Bildad eller Blivande Bostadsrätt'), (2, 'Blivande Bostadsrätt'))
 FLOOR_CHOICES = ((0, 'Inget krav'), (1, 'Ej nedre botten'))
@@ -47,7 +64,7 @@ class Listing(models.Model):
     
     user = models.ForeignKey(User)
     
-    o_county = CharField(max_length=255, verbose_name='Län')
+    o_county = CharField(max_length=255, verbose_name='Län', choices=COUNTY_CHOICES)
     o_street_address = models.CharField(max_length=255, verbose_name='Gatuadress')
     o_rooms = models.PositiveIntegerField(choices=rooms_choices, verbose_name='Antal rum') # The number of rooms times 2, to avoid having to use floats or decimals
     o_area = models.PositiveIntegerField(verbose_name='Yta') # area in square meters
@@ -60,7 +77,7 @@ class Listing(models.Model):
     o_has_balcony = models.BooleanField(verbose_name='Balkong')
     o_has_elevator = models.BooleanField(verbose_name='Hiss')
     
-    w_county = CharField(max_length=255, verbose_name='Län')
+    w_county = CharField(max_length=255, verbose_name='Län', choices=COUNTY_CHOICES)
     w_min_rooms = models.PositiveIntegerField(choices=rooms_choices, verbose_name='Minsta antal rum')
     w_min_area = models.PositiveIntegerField(verbose_name='Minsta yta') # area in square meters
     w_max_rent = models.PositiveIntegerField(verbose_name='Max hyra')

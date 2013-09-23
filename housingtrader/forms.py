@@ -1,27 +1,19 @@
 # -*- coding: utf-8 -*- 
 from django.forms import ModelForm, MultipleChoiceField, CharField
 from django.forms.widgets import CheckboxSelectMultiple
-from housingtrader.models import Listing, HOUSING_TYPE_CHOICES
+from housingtrader.models import Listing, HOUSING_TYPE_CHOICES, get_fields_by_prefix
 from django.contrib.localflavor.se.forms import SEPostalCodeField, SECountySelect
-import re
 
 def get_wanted_fields():
     '''
-    This function gets the names of all fields in the Listing model that starts with w_,
+    Wrapper function that gets the names of all fields in the Listing model that starts with w_,
     AKA the prefix of the 'wanted' fields.
     
     The function is used to exclude these fields in the 'offered' part of the form,
     and to include only these fields in the 'wanted' part of the form
     '''
-    members = [attr for attr in dir(Listing()) if not callable(attr) and not attr.startswith("__")]
-    wanted_prefix = 'w_'
-    wanted_fields = []
-    for member in members:
-        pattern = re.compile(wanted_prefix)
-        if re.match(pattern, member):
-            wanted_fields.append(member)
-        
-    return wanted_fields
+    return get_fields_by_prefix('w_')
+
 
 '''
 This is a Django snippet that provides a checkbox widget that works with a CommaSeparatedIntegerField,
