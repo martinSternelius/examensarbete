@@ -14,8 +14,9 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', include('housingtrader.urls', namespace="")),
+    url(r'^$', include('housingtrader.urls', namespace="housingtrader")),
     url(r'^login/', 'django.contrib.auth.views.login' , name='login'),
     url(r'^logout/', 'django.contrib.auth.views.logout' , name='logout'),
     url(r'^registration/', 'registration.views.register', name='register'),
+    url(r'^/?', include('housingtrader.urls', namespace="housingtrader")),
 )

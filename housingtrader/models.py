@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*- 
 from django.db import models
-from django.contrib.localflavor.se.forms import SEPostalCodeField, SECountySelect
+from django.db.models.fields import CharField
+from django.contrib.auth.models import User
 
 def generate_rooms_choices(max_rooms_choice):
     '''
@@ -9,7 +10,7 @@ def generate_rooms_choices(max_rooms_choice):
     
     rooms_choices = list()
     
-    for x in range(2, max_rooms_choice * 2):
+    for x in range(2, (max_rooms_choice +1) * 2):
         if(x % 2 > 0):
             floated_x = float(x)
             choice = floated_x/2
@@ -17,49 +18,55 @@ def generate_rooms_choices(max_rooms_choice):
             choice = x/2
         
         choice = str(choice)
-        rooms_choices.append((choice, x))
+        rooms_choices.append((x, choice))
         
     return rooms_choices
+
+
+
+HOUSING_TYPE_CHOICES = (
+    (1, 'Hyresrätt'),
+    (2, 'Bostadsrätt'),
+    (4, 'Villa/Radhus')
+)
+
+BRF_STATUS_CHOICES = ((0, 'Ingen förening bildad'), (1, 'Förening Bildad'), (2, 'Blivande Bostadsrätt'))
+BRF_WANTED_STATUS_CHOICES = ((0, 'Nej'), (1, 'Förening Bildad eller Blivande Bostadsrätt'), (2, 'Blivande Bostadsrätt'))
+FLOOR_CHOICES = ((0, 'Inget krav'), (1, 'Ej nedre botten'))
+    
+MAX_ROOMS_CHOICE = 6
+rooms_choices = generate_rooms_choices(MAX_ROOMS_CHOICE)
 
 class Listing(models.Model):
     '''
     This model represents a listing for a housing trade
     It consists of data about the housing offered (o), and data about the housing wanted (w)
     '''
-    HOUSING_TYPE_CHOICES = (
-        (0, 'Hyresrätt'),
-        (1, 'Bostadsrätt'),
-        (2, 'Villa/Radhus')
-    )
-    
-    BRF_STATUS_CHOICES = ((0, 'Ej bildad'), (1, 'Förening Bildad'), (2, 'Blivande Bostadsrätt'))
-    BRF_WANTED_STATUS_CHOICES = ((0, 'Nej'), (1, 'Förening Bildad eller Blivande Bostadsrätt'), (2, 'Blivande Bostadsrätt'))
-    
-    MAX_ROOMS_CHOICE = 6
-    rooms_choices = generate_rooms_choices(MAX_ROOMS_CHOICE)
     
     creation_datetime = models.DateTimeField(auto_now_add=True)
-    o_county = SECountySelect()
-    o_street_address = models.CharField(max_length=255)
-    o_postal_code = SEPostalCodeField
-    o_rooms = models.PositiveIntegerField(choices = rooms_choices) # The number of rooms times 2, to avoid having to use floats or decimals
-    o_area = models.PositiveIntegerField() # area in square meters
-    o_type = models.PositiveIntegerField(choices=HOUSING_TYPE_CHOICES)
-    o_rent = models.PositiveIntegerField()
-    o_description = models.TextField()
-    o_brf_status = models.PositiveIntegerField(choices=BRF_STATUS_CHOICES)
-    o_floor_no = models.IntegerField()
-    o_has_fireplace = models.BooleanField()
-    o_has_balcony = models.BooleanField()
-    o_has_elevator = models.BooleanField()
     
-    w_county = SECountySelect()
-    w_min_rooms = models.PositiveIntegerField(choices = rooms_choices)
-    w_min_area = models.PositiveIntegerField() # area in square meters
-    w_max_rent = models.PositiveIntegerField()
-    w_types = models.PositiveIntegerField(choices=HOUSING_TYPE_CHOICES)
-    w_brf_status = models.PositiveIntegerField(choices=BRF_WANTED_STATUS_CHOICES)
-    w_has_fireplace = models.NullBooleanField()
-    w_has_balcony = models.NullBooleanField()
-    w_has_elevator = models.NullBooleanField()
-    w_not_bottom_floor = models.NullBooleanField()
+    user = models.ForeignKey(User)
+    
+    o_county = CharField(max_length=255, verbose_name='Län')
+    o_street_address = models.CharField(max_length=255, verbose_name='Gatuadress')
+    o_rooms = models.PositiveIntegerField(choices=rooms_choices, verbose_name='Antal rum') # The number of rooms times 2, to avoid having to use floats or decimals
+    o_area = models.PositiveIntegerField(verbose_name='Yta') # area in square meters
+    o_type = models.PositiveIntegerField(choices=HOUSING_TYPE_CHOICES, verbose_name = 'Bostadstyp')
+    o_rent = models.PositiveIntegerField(verbose_name = 'Hyra/Avgift')
+    o_description = models.TextField(verbose_name='Beskrivning')
+    o_brf_status = models.PositiveIntegerField(choices=BRF_STATUS_CHOICES, verbose_name='Om hyresrätt, är det blivande bostadsrätt?', blank=True)
+    o_floor_no = models.IntegerField(verbose_name='Våning')
+    o_has_fireplace = models.BooleanField(verbose_name='Öppen spis')
+    o_has_balcony = models.BooleanField(verbose_name='Balkong')
+    o_has_elevator = models.BooleanField(verbose_name='Hiss')
+    
+    w_county = CharField(max_length=255, verbose_name='Län')
+    w_min_rooms = models.PositiveIntegerField(choices=rooms_choices, verbose_name='Minsta antal rum')
+    w_min_area = models.PositiveIntegerField(verbose_name='Minsta yta') # area in square meters
+    w_max_rent = models.PositiveIntegerField(verbose_name='Max hyra')
+    w_types = models.CommaSeparatedIntegerField(max_length=255, verbose_name='Önskade bostadstyper')
+    w_brf_status = models.PositiveIntegerField(choices=BRF_WANTED_STATUS_CHOICES, verbose_name='Blivande bostadsrätt?', blank=True)
+    w_has_fireplace = models.NullBooleanField(verbose_name='Öppen spis')
+    w_has_balcony = models.NullBooleanField(verbose_name='Balkong')
+    w_has_elevator = models.NullBooleanField(verbose_name='Hiss')
+    w_not_bottom_floor = models.NullBooleanField(verbose_name='Våning', choices=FLOOR_CHOICES)
