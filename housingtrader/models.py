@@ -88,3 +88,10 @@ class Listing(models.Model):
     w_has_balcony = models.NullBooleanField(verbose_name='Balkong')
     w_has_elevator = models.NullBooleanField(verbose_name='Hiss')
     w_not_bottom_floor = models.NullBooleanField(verbose_name='Våning', choices=FLOOR_CHOICES)
+    
+    def __unicode__(self):
+        return self.o_street_address
+    
+    class Meta:
+        verbose_name='Annons'
+        verbose_name_plural='Annonser'

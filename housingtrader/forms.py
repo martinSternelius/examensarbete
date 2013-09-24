@@ -91,11 +91,11 @@ class CompleteListingForm(ModelForm):
     ''' 
     w_types = CSIMultipleChoiceField(required=True, choices=HOUSING_TYPE_CHOICES, label='Önskade bostadstyper')
     
-    def __init__(self, data=None, user=None):
+    def __init__(self, user=None, *args, **kwargs):
         '''
         @type user: User 
         '''
-        super(CompleteListingForm, self).__init__(data=data)
+        super(CompleteListingForm, self).__init__(*args, **kwargs)
         
         self.user = user
     

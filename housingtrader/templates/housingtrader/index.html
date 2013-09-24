@@ -2,4 +2,16 @@
 
 {% block main %}
 <h1>Välkommen {{ user.username }}!</h1>
+
+{% if listings %}
+	<h2>Dina annonser:</h2>
+	<ul>
+	{% for listing in listings %}
+		<li><a href="{{listing.id}}/edit">{{ listing }}</a></li>
+	{% endfor %}
+	</ul>
+	<p><a href="{% url 'housingtrader:create_listing' %}">Skapa en ny annons</a></p>
+{% else %}
+	<p>Du har inga annonser. <a href="{% url 'housingtrader:create_listing' %}">Skapa en annons här!</a></p>
+{% endif %}
 {% endblock %}
