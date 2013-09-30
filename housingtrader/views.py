@@ -23,7 +23,7 @@ def create_listing(request):
         finally:
             try:
                 wanted_form.is_valid()
-                complete_form = CompleteListingForm(request.POST, user=request.user)
+                complete_form = CompleteListingForm(data=request.POST, user=request.user)
                 complete_form.save()
                 return HttpResponseRedirect(reverse('housingtrader-index:index'))
             except:
