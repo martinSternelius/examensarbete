@@ -89,10 +89,40 @@ class Listing(models.Model):
     w_max_rent = models.PositiveIntegerField(verbose_name='Max hyra')
     w_types = models.CommaSeparatedIntegerField(max_length=255, verbose_name='Önskade bostadstyper')
     w_brf_status = models.PositiveIntegerField(choices=BRF_WANTED_STATUS_CHOICES, verbose_name='Blivande bostadsrätt?', null=True, blank=True)
-    w_has_fireplace = models.NullBooleanField(verbose_name='Öppen spis')
-    w_has_balcony = models.NullBooleanField(verbose_name='Balkong')
-    w_has_elevator = models.NullBooleanField(verbose_name='Hiss')
-    w_not_bottom_floor = models.NullBooleanField(verbose_name='Våning', choices=FLOOR_CHOICES)
+    w_has_fireplace = models.BooleanField(verbose_name='Öppen spis')
+    w_has_balcony = models.BooleanField(verbose_name='Balkong')
+    w_has_elevator = models.BooleanField(verbose_name='Hiss')
+    w_not_bottom_floor = models.BooleanField(verbose_name='Våning', choices=FLOOR_CHOICES)
+    
+    def find_matches(self):
+        wanted_types = str(self.w_types).split(',')
+        
+        matches = Listing.objects.filter(
+            o_county = self.w_county,
+            o_rooms__gte = self.w_min_rooms,
+            o_area__gte = self.w_min_area,
+            o_rent__lte = self.w_max_rent,
+            o_type__in = wanted_types
+        ).exclude(user = self.user)
+        
+        if self.w_brf_status is not None:
+            matches = matches.filter(
+                o_brf_status__gte = self.w_brf_status
+            )
+            
+        if self.w_has_fireplace:
+            matches = matches.filter(o_has_fireplace = True)
+            
+        if self.w_has_elevator:
+            matches = matches.filter(o_has_elevator = True)
+            
+        if self.w_has_balcony:
+            matches = matches.filter(o_has_balcony = True)
+            
+        if self.w_not_bottom_floor:
+            matches = matches.filter(o_floor_no__gt = 0)
+        
+        return matches
     
     def __unicode__(self):
         return self.o_street_address
