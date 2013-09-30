@@ -24,12 +24,14 @@ def generate_rooms_choices(max_rooms_choice):
         
     return rooms_choices
 
-
+TYPE_TENANCY = 1
+TYPE_BRF = 2
+TYPE_HOUSE = 4
 
 HOUSING_TYPE_CHOICES = (
-    (1, 'Hyresrätt'),
-    (2, 'Bostadsrätt'),
-    (4, 'Villa/Radhus')
+    (TYPE_TENANCY, 'Hyresrätt'),
+    (TYPE_BRF, 'Bostadsrätt'),
+    (TYPE_HOUSE, 'Villa/Radhus')
 )
 
 def get_fields_by_prefix(prefix):
@@ -46,9 +48,12 @@ def get_fields_by_prefix(prefix):
     return fields
     
     
+BRF_NONE = 0
+BRF_FORMED = 1
+BRF_TO_BE = 2
 
-BRF_STATUS_CHOICES = ((0, 'Ingen förening bildad'), (1, 'Förening Bildad'), (2, 'Blivande Bostadsrätt'))
-BRF_WANTED_STATUS_CHOICES = ((0, 'Nej'), (1, 'Förening Bildad eller Blivande Bostadsrätt'), (2, 'Blivande Bostadsrätt'))
+BRF_STATUS_CHOICES = ((BRF_NONE, 'Ingen förening bildad'), (BRF_FORMED, 'Förening Bildad'), (BRF_TO_BE, 'Blivande Bostadsrätt'))
+BRF_WANTED_STATUS_CHOICES = ((BRF_NONE, 'Nej'), (BRF_FORMED, 'Förening Bildad eller Blivande Bostadsrätt'), (BRF_TO_BE, 'Blivande Bostadsrätt'))
 FLOOR_CHOICES = ((0, 'Inget krav'), (1, 'Ej nedre botten'))
     
 MAX_ROOMS_CHOICE = 6
