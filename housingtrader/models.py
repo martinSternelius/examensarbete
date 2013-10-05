@@ -72,6 +72,7 @@ class Listing(models.Model):
     o_county = CharField(max_length=255, verbose_name='Län', choices=COUNTY_CHOICES)
     o_street_address = models.CharField(max_length=255, verbose_name='Gatuadress')
     o_postal_code = models.CharField(max_length=255, verbose_name='Postnummer')
+    o_postal_town = models.CharField(max_length=255, verbose_name='Postort')
     o_rooms = models.PositiveIntegerField(choices=rooms_choices, verbose_name='Antal rum') # The number of rooms times 2, to avoid having to use floats or decimals
     o_area = models.PositiveIntegerField(verbose_name='Yta') # area in square meters
     o_type = models.PositiveIntegerField(choices=HOUSING_TYPE_CHOICES, verbose_name='Bostadstyp')
