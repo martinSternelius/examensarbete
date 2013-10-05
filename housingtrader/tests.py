@@ -10,8 +10,6 @@ from django.test import TestCase
 from django.test.client import Client
 from django.contrib.auth.models import User
 from housingtrader.models import Listing, TYPE_BRF, TYPE_TENANCY, TYPE_HOUSE, BRF_NONE, BRF_FORMED
-from housingtrader.forms import CompleteListingForm
-from django.http.request import QueryDict
 
 class ListingViewTests(TestCase):
     def setUp(self):
@@ -40,6 +38,7 @@ class ListingViewTests(TestCase):
         asserted_listing.o_rent = 1722
         asserted_listing.o_rooms = 2
         asserted_listing.o_street_address = 'Klientvägen 1'
+        asserted_listing.o_postal_town = 'Stockholm'
         asserted_listing.o_type = TYPE_BRF
         asserted_listing.w_brf_status = None
         asserted_listing.w_county = 'AB'
@@ -65,6 +64,7 @@ class ListingViewTests(TestCase):
             'o_rent' : 1722,
             'o_rooms' : 2,
             'o_street_address' : 'Klientvägen 1',
+            'o_postal_town' : 'Stockholm',
             'o_type' : TYPE_BRF,
             'w_brf_status' : '',
             'w_county' : 'AB',
