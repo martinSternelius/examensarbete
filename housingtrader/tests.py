@@ -240,6 +240,13 @@ class ListingModelTests(TestCase):
         
         self.assertFalse(unmatched_listing in self.listing.find_matches())
         
+    def test_should_not_match_because_of_same_user(self):
+        unmatched_listing = self.dummy_listing
+        unmatched_listing.user = self.user
+        unmatched_listing.save()
+        
+        self.assertFalse(unmatched_listing in self.listing.find_matches())
+        
         
         
         
