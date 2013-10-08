@@ -83,7 +83,7 @@ class ListingViewTests(TestCase):
         listing.delete() # Sets pk to none, but keeps all other data, which should make it identical to the asserted listing
         self.assertEqual(asserted_listing, listing)
         
-class ListingModelTests(TestCase):
+class ListingFindMatchesTests(TestCase):
     def setUp(self):
         
         self.user = User.objects.create_user('tester', 'test@example.com', 'password')
@@ -247,7 +247,95 @@ class ListingModelTests(TestCase):
         
         self.assertFalse(unmatched_listing in self.listing.find_matches())
         
+    def test_reverse_should_match(self):
+        matched_listing = self.dummy_listing
+        self.assertTrue(matched_listing in self.listing.find_reverse_matches())
+    
+
+    def test_reverse_should_not_match_because_of_county(self):
+        unmatched_listing = self.dummy_listing
+        unmatched_listing.w_county = 'F'
+        unmatched_listing.save()
         
+        self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
+        
+    def test_reverse_should_not_match_because_of_area(self):
+        unmatched_listing = self.dummy_listing
+        unmatched_listing.w_min_area = 34
+        unmatched_listing.save()
+        
+        self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
+        
+    def test_reverse_should_not_match_because_of_rooms(self):
+        unmatched_listing = self.dummy_listing
+        unmatched_listing.w_min_rooms = 3
+        unmatched_listing.save()
+        
+        self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
+        
+    def test_reverse_should_not_match_because_of_rent(self):
+        unmatched_listing = self.dummy_listing
+        unmatched_listing.w_max_rent = 1700
+        unmatched_listing.save()
+        
+        self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
+        
+    def test_reverse_should_not_match_because_of_type(self):
+        unmatched_listing = self.dummy_listing
+        unmatched_listing.w_types = [TYPE_HOUSE]
+        unmatched_listing.save()
+        
+        self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
+        
+    def test_reverse_should_not_match_because_of_brf_status(self):
+        unmatched_listing = self.dummy_listing
+        unmatched_listing.w_brf_status = BRF_FORMED
+        unmatched_listing.save()
+        
+        self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
+        
+    def test_reverse_should_not_match_because_of_fireplace(self):
+        unmatched_listing = self.dummy_listing
+        unmatched_listing.w_has_fireplace = True
+        unmatched_listing.save()
+        
+        self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
+        
+    def test_reverse_should_not_match_because_of_elevator(self):
+        unmatched_listing = self.dummy_listing
+        unmatched_listing.w_has_elevator = True
+        unmatched_listing.save()
+        
+        self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
+        
+    def test_reverse_should_not_match_because_of_balcony(self):
+        unmatched_listing = self.dummy_listing
+        unmatched_listing.w_has_balcony = True
+        unmatched_listing.save()
+        
+        self.listing.o_has_balcony = False
+        self.listing.save()
+        
+        self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
+        
+    def test_reverse_should_not_match_because_of_floor(self):
+        unmatched_listing = self.dummy_listing
+        unmatched_listing.w_not_bottom_floor = True
+        unmatched_listing.save()
+        
+        self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
+        
+    def test_reverse_should_not_match_because_of_same_user(self):
+        unmatched_listing = self.dummy_listing
+        unmatched_listing.user = self.user
+        unmatched_listing.save()
+        
+        self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
+        
+    def test_mutual_match(self):
+        matched_listing = self.dummy_listing
+        
+        self.assertTrue(matched_listing in self.listing.find_mutual_matches())
         
         
         

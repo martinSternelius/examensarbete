@@ -36,7 +36,7 @@ HOUSING_TYPE_CHOICES = (
 
 def get_fields_by_prefix(prefix):
     '''
-    Get fields names of the Listing model that have the provided prefix
+    Get field names of the Listing model that have the provided prefix
     '''
     members = [attr for attr in dir(Listing()) if not callable(attr) and not attr.startswith("__")]
     fields = []
@@ -56,7 +56,7 @@ BRF_STATUS_CHOICES = ((BRF_NONE, 'Ingen förening bildad'), (BRF_FORMED, 'Fören
 BRF_WANTED_STATUS_CHOICES = ((BRF_NONE, 'Nej'), (BRF_FORMED, 'Förening Bildad eller Blivande Bostadsrätt'), (BRF_TO_BE, 'Blivande Bostadsrätt'))
 FLOOR_CHOICES = ((0, 'Inget krav'), (1, 'Ej nedre botten'))
     
-MAX_ROOMS_CHOICE = 6
+MAX_ROOMS_CHOICE = 10
 rooms_choices = generate_rooms_choices(MAX_ROOMS_CHOICE)
 
 class Listing(models.Model):
@@ -96,6 +96,10 @@ class Listing(models.Model):
     w_not_bottom_floor = models.BooleanField(verbose_name='Våning', choices=FLOOR_CHOICES)
     
     def find_matches(self):
+        '''
+        Finds listings of other users where the offered parameters match this listing's wanted parameters
+        '''
+        
         wanted_types = str(self.w_types).split(',')
         
         matches = Listing.objects.filter(
@@ -122,8 +126,65 @@ class Listing(models.Model):
             
         if self.w_not_bottom_floor:
             matches = matches.filter(o_floor_no__gt = 0)
-        
+            
         return matches
+    
+    def find_reverse_matches(self):
+        '''
+        Finds listings of other users where the wanted parameters match this listing's offered parameters
+        '''
+        
+        matches = Listing.objects.filter(
+            w_county = self.o_county,
+            w_min_rooms__lte = self.o_rooms,
+            w_min_area__lte = self.o_area,
+            w_max_rent__gte = self.o_rent,
+            w_has_fireplace__lte = self.o_has_fireplace,
+            w_has_elevator__lte = self.o_has_elevator,
+            w_has_balcony__lte = self.w_has_balcony
+        ).exclude(user = self.user)
+        
+        final_matches = []
+        for listing in matches:
+            if listing.w_not_bottom_floor and self.o_floor_no < 1:
+                continue
+            
+            wanted_types = str(listing.w_types).split(',')
+            
+            if str(self.o_type) not in wanted_types:
+                continue
+            
+            if listing.w_brf_status is not None and self.o_brf_status < listing.w_brf_status:
+                continue
+            
+            final_matches.append(listing)
+                
+        return final_matches
+    
+    def find_mutual_matches(self):
+        '''
+        Finds listings where the offered and wanted parameters match each other
+        '''
+        
+        matches= self.find_matches()
+        reverse_matches = self.find_reverse_matches()
+        
+        return set(matches).intersection(reverse_matches)
+    
+    def get_w_types_display(self):
+        '''
+        Returns a comma separated string of housing type values
+        '''
+        
+        housing_types = dict(HOUSING_TYPE_CHOICES)
+        wanted_type_ids = str(self.w_types).split(',')
+        wanted_types_verbose = []
+        for type_id in wanted_type_ids:
+            type_id = type_id.strip()
+            housingtype = housing_types[int(type_id)]
+            wanted_types_verbose.append(housingtype)
+            
+        return ', '.join(wanted_types_verbose)
     
     def __unicode__(self):
         return self.o_street_address
