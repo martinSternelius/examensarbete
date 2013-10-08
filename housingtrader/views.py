@@ -50,3 +50,14 @@ def edit_listing(request, listing_id):
             except:
                 pass
     return render(request, 'housingtrader/create_listing.html', {'offered_form' : offered_form, 'wanted_form' : wanted_form})
+
+@login_required
+def find_trades(request, listing_id):
+    listing = get_object_or_404(Listing, user=request.user, pk=listing_id)
+    matched_listings = listing.find_matches()
+    return render(request, 'housingtrader/find_trades.html', {'listing':listing, 'other_listings' : matched_listings})
+
+@login_required
+def detail(request, listing_id, other_listing_id):
+    other_listing = get_object_or_404(Listing, pk=other_listing_id)
+    return render(request, 'housingtrader/detail.html', {'listing':other_listing})
