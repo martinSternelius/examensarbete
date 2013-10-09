@@ -192,3 +192,17 @@ class Listing(models.Model):
     class Meta:
         verbose_name='Annons'
         verbose_name_plural='Annonser'
+        
+class TradeRequest(models.Model):
+    creation_datetime = models.DateTimeField(auto_now_add=True)
+    requester = models.ForeignKey(Listing, related_name='trade_requests_sent')
+    receiver = models.ForeignKey(Listing, related_name='trade_requests_received')
+    viewed_by_receiver = models.BooleanField(default=False)
+    declined_by_receiver = models.BooleanField(default=False)
+    
+    def __unicode__(self):
+        return str(self.requester) + ' bytes mot ' + str(self.receiver)
+    
+    class Meta:
+        unique_together = ('requester', 'receiver')
+    

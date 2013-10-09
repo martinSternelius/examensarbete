@@ -9,7 +9,76 @@ Replace this with more appropriate tests for your application.
 from django.test import TestCase
 from django.test.client import Client
 from django.contrib.auth.models import User
-from housingtrader.models import Listing, TYPE_BRF, TYPE_TENANCY, TYPE_HOUSE, BRF_NONE, BRF_FORMED
+from housingtrader.models import Listing, TradeRequest, TYPE_BRF, TYPE_TENANCY, TYPE_HOUSE, BRF_NONE, BRF_FORMED
+
+def create_test_users():
+    user = User.objects.create_user('tester', 'test@example.com', 'password')
+    other_user = User.objects.create_user('tester2', 'test2@example.com', 'password')
+    
+    return {'user':user, 'other_user':other_user}
+
+def create_test_listings():
+    '''
+    Creates two Listing objects with the test users of the above function as owners
+    '''
+    test_users = create_test_users()
+    
+    listing = Listing()
+    listing.o_area = 33
+    listing.o_brf_status = None
+    listing.o_county = 'AB'
+    listing.o_description = 'Min'
+    listing.o_floor_no = -1
+    listing.o_has_balcony = 1
+    listing.o_has_elevator = 0
+    listing.o_has_fireplace = 0
+    listing.o_postal_code = '16846'
+    listing.o_rent = 1722
+    listing.o_rooms = 2
+    listing.o_street_address = 'Arvid Mörnes väg 42'
+    listing.o_type = TYPE_BRF
+    listing.w_brf_status = None
+    listing.w_county = 'AB'
+    listing.w_has_balcony = False
+    listing.w_has_elevator = False
+    listing.w_has_fireplace = False
+    listing.w_max_rent = 5000
+    listing.w_min_area = 33
+    listing.w_min_rooms = 2
+    listing.w_not_bottom_floor = False
+    listing.w_types = ','.join([str(TYPE_TENANCY), str(TYPE_BRF)])
+    listing.user = test_users['user']
+    listing.save()
+    
+    other_listing = Listing()
+    other_listing.o_area = 33
+    other_listing.o_brf_status = None
+    other_listing.o_county = 'AB'
+    other_listing.o_description = 'Annan'
+    other_listing.o_floor_no = -1
+    other_listing.o_has_balcony = 1
+    other_listing.o_has_elevator = 0
+    other_listing.o_has_fireplace = 0
+    other_listing.o_postal_code = '16846'
+    other_listing.o_rent = 1722
+    other_listing.o_rooms = 2
+    other_listing.o_street_address = 'Annan adress'
+    other_listing.o_type = TYPE_BRF
+    other_listing.w_brf_status = None
+    other_listing.w_county = 'AB'
+    other_listing.w_has_balcony = False
+    other_listing.w_has_elevator = False
+    other_listing.w_has_fireplace = False
+    other_listing.w_max_rent = 5000
+    other_listing.w_min_area = 33
+    other_listing.w_min_rooms = 2
+    other_listing.w_not_bottom_floor = False
+    other_listing.w_types = ','.join([str(TYPE_TENANCY), str(TYPE_BRF)])
+    other_listing.user = test_users['other_user']
+    other_listing.save()
+    
+    return {'listing':listing, 'other_listing':other_listing}
+    
 
 class ListingViewTests(TestCase):
     def setUp(self):
@@ -85,117 +154,62 @@ class ListingViewTests(TestCase):
         
 class ListingFindMatchesTests(TestCase):
     def setUp(self):
+        test_listings = create_test_listings()
         
-        self.user = User.objects.create_user('tester', 'test@example.com', 'password')
-        self.other_user = User.objects.create_user('tester2', 'test2@example.com', 'password')
+        self.listing = test_listings['listing']
+        self.user = self.listing.user
         
-        listing = Listing()
-        listing.o_area = 33
-        listing.o_brf_status = None
-        listing.o_county = 'AB'
-        listing.o_description = 'Min'
-        listing.o_floor_no = -1
-        listing.o_has_balcony = 1
-        listing.o_has_elevator = 0
-        listing.o_has_fireplace = 0
-        listing.o_postal_code = '16846'
-        listing.o_rent = 1722
-        listing.o_rooms = 2
-        listing.o_street_address = 'Arvid Mörnes väg 42'
-        listing.o_type = TYPE_BRF
-        listing.w_brf_status = None
-        listing.w_county = 'AB'
-        listing.w_has_balcony = False
-        listing.w_has_elevator = False
-        listing.w_has_fireplace = False
-        listing.w_max_rent = 5000
-        listing.w_min_area = 33
-        listing.w_min_rooms = 2
-        listing.w_not_bottom_floor = False
-        listing.w_types = ','.join([str(TYPE_TENANCY), str(TYPE_BRF)])
-        
-        listing.user = self.user
-        
-        self.listing = listing
-        self.listing.save()
-        
-        dummy_listing = Listing()
-        dummy_listing.o_area = 33
-        dummy_listing.o_brf_status = None
-        dummy_listing.o_county = 'AB'
-        dummy_listing.o_description = 'Annan'
-        dummy_listing.o_floor_no = -1
-        dummy_listing.o_has_balcony = 1
-        dummy_listing.o_has_elevator = 0
-        dummy_listing.o_has_fireplace = 0
-        dummy_listing.o_postal_code = '16846'
-        dummy_listing.o_rent = 1722
-        dummy_listing.o_rooms = 2
-        dummy_listing.o_street_address = 'Annan adress'
-        dummy_listing.o_type = TYPE_BRF
-        dummy_listing.w_brf_status = None
-        dummy_listing.w_county = 'AB'
-        dummy_listing.w_has_balcony = False
-        dummy_listing.w_has_elevator = False
-        dummy_listing.w_has_fireplace = False
-        dummy_listing.w_max_rent = 5000
-        dummy_listing.w_min_area = 33
-        dummy_listing.w_min_rooms = 2
-        dummy_listing.w_not_bottom_floor = False
-        dummy_listing.w_types = ','.join([str(TYPE_TENANCY), str(TYPE_BRF)])
-        
-        dummy_listing.user = self.other_user
-        dummy_listing.save()
-        self.dummy_listing = dummy_listing
+        self.other_listing = test_listings['other_listing']
+        self.other_user = self.other_listing.user
         
     def tearDown(self):
         self.user.delete()
         self.other_user.delete()
         self.listing.delete()
-        self.dummy_listing.delete()
+        self.other_listing.delete()
         
     def test_should_match(self):
-        matching_listing = self.dummy_listing
+        matching_listing = self.other_listing
         
         self.assertTrue(matching_listing in self.listing.find_matches())
         
     def test_should_not_match_because_of_county(self):
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         unmatched_listing.o_county = 'W'
         unmatched_listing.save()
         
         self.assertFalse(unmatched_listing in self.listing.find_matches())
         
     def test_should_not_match_because_of_area(self):
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         unmatched_listing.o_area = 32
         unmatched_listing.save()
         
         self.assertFalse(unmatched_listing in self.listing.find_matches())
         
     def test_should_not_match_because_of_rooms(self):
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         unmatched_listing.o_rooms = 1
         unmatched_listing.save()
         
         self.assertFalse(unmatched_listing in self.listing.find_matches())
         
     def test_should_not_match_because_of_rent(self):
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         unmatched_listing.o_rent = 6000
         unmatched_listing.save()
         
         self.assertFalse(unmatched_listing in self.listing.find_matches())
         
     def test_should_not_match_because_of_type(self):
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         unmatched_listing.o_type = TYPE_HOUSE
         unmatched_listing.save()
         
         self.assertFalse(unmatched_listing in self.listing.find_matches())
         
     def test_should_not_match_because_of_brf_status(self):
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         
         unmatched_listing.o_type = TYPE_TENANCY
         unmatched_listing.o_brf_status = BRF_NONE
@@ -207,7 +221,7 @@ class ListingFindMatchesTests(TestCase):
         self.assertFalse(unmatched_listing in self.listing.find_matches())
         
     def test_should_not_match_because_of_fireplace(self):
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         
         self.listing.w_has_fireplace = True
         self.listing.save()
@@ -215,7 +229,7 @@ class ListingFindMatchesTests(TestCase):
         self.assertFalse(unmatched_listing in self.listing.find_matches())
         
     def test_should_not_match_because_of_elevator(self):
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         
         self.listing.w_has_elevator = True
         self.listing.save()
@@ -223,7 +237,7 @@ class ListingFindMatchesTests(TestCase):
         self.assertFalse(unmatched_listing in self.listing.find_matches())
         
     def test_should_not_match_because_of_balcony(self):
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         unmatched_listing.o_has_balcony = False
         unmatched_listing.save()
         
@@ -236,80 +250,80 @@ class ListingFindMatchesTests(TestCase):
         self.listing.w_not_bottom_floor = True
         self.listing.save()
         
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         
         self.assertFalse(unmatched_listing in self.listing.find_matches())
         
     def test_should_not_match_because_of_same_user(self):
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         unmatched_listing.user = self.user
         unmatched_listing.save()
         
         self.assertFalse(unmatched_listing in self.listing.find_matches())
         
     def test_reverse_should_match(self):
-        matched_listing = self.dummy_listing
+        matched_listing = self.other_listing
         self.assertTrue(matched_listing in self.listing.find_reverse_matches())
     
 
     def test_reverse_should_not_match_because_of_county(self):
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         unmatched_listing.w_county = 'F'
         unmatched_listing.save()
         
         self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
         
     def test_reverse_should_not_match_because_of_area(self):
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         unmatched_listing.w_min_area = 34
         unmatched_listing.save()
         
         self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
         
     def test_reverse_should_not_match_because_of_rooms(self):
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         unmatched_listing.w_min_rooms = 3
         unmatched_listing.save()
         
         self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
         
     def test_reverse_should_not_match_because_of_rent(self):
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         unmatched_listing.w_max_rent = 1700
         unmatched_listing.save()
         
         self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
         
     def test_reverse_should_not_match_because_of_type(self):
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         unmatched_listing.w_types = [TYPE_HOUSE]
         unmatched_listing.save()
         
         self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
         
     def test_reverse_should_not_match_because_of_brf_status(self):
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         unmatched_listing.w_brf_status = BRF_FORMED
         unmatched_listing.save()
         
         self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
         
     def test_reverse_should_not_match_because_of_fireplace(self):
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         unmatched_listing.w_has_fireplace = True
         unmatched_listing.save()
         
         self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
         
     def test_reverse_should_not_match_because_of_elevator(self):
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         unmatched_listing.w_has_elevator = True
         unmatched_listing.save()
         
         self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
         
     def test_reverse_should_not_match_because_of_balcony(self):
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         unmatched_listing.w_has_balcony = True
         unmatched_listing.save()
         
@@ -319,24 +333,46 @@ class ListingFindMatchesTests(TestCase):
         self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
         
     def test_reverse_should_not_match_because_of_floor(self):
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         unmatched_listing.w_not_bottom_floor = True
         unmatched_listing.save()
         
         self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
         
     def test_reverse_should_not_match_because_of_same_user(self):
-        unmatched_listing = self.dummy_listing
+        unmatched_listing = self.other_listing
         unmatched_listing.user = self.user
         unmatched_listing.save()
         
         self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
         
     def test_mutual_match(self):
-        matched_listing = self.dummy_listing
+        matched_listing = self.other_listing
         
         self.assertTrue(matched_listing in self.listing.find_mutual_matches())
         
+        
+class TradeRequestModelTests(TestCase):
+    
+    def setUp(self):
+        test_listings = create_test_listings()
+        self.listing = test_listings['listing']
+        self.other_listing = test_listings['other_listing']
+        
+    def tearDown(self):
+        self.listing.delete()
+        self.other_listing.delete()
+        self.listing.user.delete()
+        self.other_listing.user.delete()
+    
+    def test_trade_request_save(self):
+        trade_request = TradeRequest(requester=self.listing, receiver=self.other_listing)
+        trade_request.save()
+        
+        trade_request1 = self.listing.trade_requests_sent.get(receiver=self.other_listing)
+        trade_request2 = self.other_listing.trade_requests_received.get(requester=self.listing)
+        
+        self.assertEqual(trade_request1.pk, trade_request2.pk)
         
         
     
