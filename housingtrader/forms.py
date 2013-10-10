@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*- 
 from django.forms import ModelForm, MultipleChoiceField, CharField
 from django.forms.widgets import CheckboxSelectMultiple
-from housingtrader.models import Listing, HOUSING_TYPE_CHOICES, get_fields_by_prefix
+from housingtrader.models import Listing, HOUSING_TYPE_CHOICES, get_listing_fields_by_prefix
 from django.contrib.localflavor.se.forms import SEPostalCodeField, SECountySelect
 
 def get_wanted_fields():
@@ -12,7 +12,7 @@ def get_wanted_fields():
     The function is used to exclude these fields in the 'offered' part of the form,
     and to include only these fields in the 'wanted' part of the form
     '''
-    return get_fields_by_prefix('w_')
+    return get_listing_fields_by_prefix('w_')
 
 
 '''

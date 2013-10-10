@@ -34,7 +34,7 @@ HOUSING_TYPE_CHOICES = (
     (TYPE_HOUSE, 'Villa/Radhus')
 )
 
-def get_fields_by_prefix(prefix):
+def get_listing_fields_by_prefix(prefix):
     '''
     Get field names of the Listing model that have the provided prefix
     '''
