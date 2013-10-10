@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block main %}
+<h1>Välkommen {{ user.username }}!</h1>
+
+{% if listings %}
+	<h2>Dina annonser:</h2>
+	<table>
+		<thead>
+			<tr>
+				<td>Annons</td>
+				<td>Redigera</td>
+				<td>Hitta byten</td>
+			</tr>
+		</thead>
+		<tbody>
+		{% for listing in listings %}
+			<tr>
+				<td><a href="{{listing.id}}/edit">{{ listing }}</a></td>
+				<td><a href="{{listing.id}}/edit">.</a></td>
+				<td><a href="{{listing.id}}/find_trades">.</a></td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+	<p><a href="{% url 'housingtrader:create_listing' %}">Skapa en ny annons</a></p>
+{% else %}
+	<p>Du har inga annonser. <a href="{% url 'housingtrader:create_listing' %}">Skapa en annons här!</a></p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block main %}
+<h1>Skapa din bytesannons</h1>
+<form action="" method="post">
+{% csrf_token %}
+	<fieldset>
+		<legend>Finnes</legend>
+		<ul>
+			{{ offered_form.as_ul }}
+		</ul>
+	</fieldset>
+	<fieldset>
+		<legend>Sökes</legend>
+		<ul>
+			{{ wanted_form.as_ul }}
+		</ul>
+	</fieldset>
+	<input type="submit" value="Spara" />
+</form>
+{% endblock %}
