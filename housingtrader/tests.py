@@ -8,7 +8,7 @@ Replace this with more appropriate tests for your application.
 
 from django.test import TestCase
 from django.test.client import Client
-from django.contrib.auth.models import User
+from registration.models import User
 from housingtrader.models import Listing, TradeRequest, TYPE_BRF, TYPE_TENANCY, TYPE_HOUSE, BRF_NONE, BRF_FORMED
 
 def create_test_users():

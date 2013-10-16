@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*- 
 from django.db import models
 from django.db.models.fields import CharField
-from django.contrib.auth.models import User
+from examensarbete.settings import AUTH_USER_MODEL
 from django.contrib.localflavor.se.se_counties import COUNTY_CHOICES
 import re
 
@@ -67,7 +67,7 @@ class Listing(models.Model):
     
     creation_datetime = models.DateTimeField(auto_now_add=True)
     
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(AUTH_USER_MODEL)
     
     o_county = CharField(max_length=255, verbose_name='Län', choices=COUNTY_CHOICES)
     o_street_address = models.CharField(max_length=255, verbose_name='Gatuadress')

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- 
 
-from django.contrib.auth.forms import UserCreationForm
+from registration.forms import UserCreationForm
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 
