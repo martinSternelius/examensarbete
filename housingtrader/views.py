@@ -1,10 +1,13 @@
+# -*- coding: utf-8 -*-
 # Create your views here.
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from registration.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from housingtrader.forms import ListingOfferedForm, ListingWantedForm, CompleteListingForm
 from housingtrader.models import Listing
+from django.db.models import Q
 
 @login_required
 def index(request):
@@ -61,3 +64,26 @@ def find_trades(request, listing_id):
 def detail(request, listing_id, other_listing_id):
     other_listing = get_object_or_404(Listing, pk=other_listing_id)
     return render(request, 'housingtrader/detail.html', {'listing':other_listing})
+
+def search(request):
+    if request.GET['submit']:
+        search_listing = Listing()
+        search_listing.w_county = request.GET['county']
+        search_listing.w_types = ','.join(request.GET.getlist('types'))
+        search_listing.w_min_area = request.GET['min_area']
+        search_listing.w_min_rooms = request.GET['min_rooms']
+        search_listing.w_max_rent = request.GET['max_rent']
+        search_listing.w_has_fireplace = int(request.GET['has_fireplace'])
+        search_listing.w_has_balcony = int(request.GET['has_balcony'])
+        search_listing.w_has_elevator = int(request.GET['has_elevator'])
+        search_listing.w_not_bottom_floor = int(request.GET['not_bottom_floor'])
+        
+        results = search_listing.listing_search()
+        
+        results = results.filter(
+            Q(o_description__icontains = request.GET['text'])
+            | Q(o_street_address__icontains = request.GET['text']) 
+            | Q(o_postal_town__icontains = request.GET['text'])
+        )
+        
+        return render(request, 'housingtrader/search_results.html', {'results':results})

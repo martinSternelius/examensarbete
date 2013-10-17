@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block main %}
+<h1>Välkommen {{ user.username }}!</h1>
+
+{% if results %}
+	<h2>Hittade byten:</h2>
+	<table>
+		<thead>
+			<tr>
+				<td>Adress</td>
+				<td>Postnummer</td>
+				<td>Postort</td>
+				<td>Län</td>
+				<td>Area (kvm)</td>
+				<td>Hyra/Avgift (kr/mån)</td>
+			</tr>
+		</thead>
+		<tbody>
+		{% for listing in results %}
+			<tr>
+				<td><a href="">{{ listing }}</a></td>
+				<td>{{ listing.o_postal_code }}</td>
+				<td>{{ listing.o_postal_town }}</td>
+				<td>{{ listing.get_o_county_display }}</td>
+				<td>{{ listing.o_area }}</td>
+				<td>{{ listing.o_rent }}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+{% else %}
+	<p>Hittade inga annonser</p>
+{% endif %}
+{% endblock %}

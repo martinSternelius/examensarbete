@@ -82,10 +82,17 @@ def create_test_listings():
 
 class ListingViewTests(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user('tester', 'test@example.com', 'password')
+        test_listings = create_test_listings()
+        self.listing = test_listings['listing']
+        self.other_listing = test_listings['other_listing']
+        self.user = test_listings['listing'].user
+        self.other_user = test_listings['other_listing'].user
         
     def tearDown(self):
+        self.listing.delete()
+        self.other_listing.delete()
         self.user.delete()
+        self.other_user.delete()
         
     def test_create_listing_view(self):
         '''
@@ -98,7 +105,7 @@ class ListingViewTests(TestCase):
         asserted_listing.o_area = 33
         asserted_listing.o_brf_status = None
         asserted_listing.o_county = 'AB'
-        asserted_listing.o_description = 'Min'
+        asserted_listing.o_description = 'Skapa'
         asserted_listing.o_floor_no = -1
         asserted_listing.o_has_balcony = 1
         asserted_listing.o_has_elevator = 0
@@ -124,7 +131,7 @@ class ListingViewTests(TestCase):
             'o_area' : 33,
             'o_brf_status' : '',
             'o_county' : 'AB',
-            'o_description' : 'Min',
+            'o_description' : 'Skapa',
             'o_floor_no' : -1,
             'o_has_balcony' : 1,
             'o_has_elevator' : 0,
@@ -148,9 +155,47 @@ class ListingViewTests(TestCase):
         }
         client.post('/create_listing/', data)
         
-        listing = Listing.objects.get(o_description='Min')
+        listing = Listing.objects.get(o_description='Skapa')
         listing.delete() # Sets pk to none, but keeps all other data, which should make it identical to the asserted listing
         self.assertEqual(asserted_listing, listing)
+        
+    def test_search(self):
+        client = Client()
+        
+        data = {
+            'text' : 'arvid',
+            'county' : 'AB',
+            'max_rent' : '4000',
+            'min_area' : 33,
+            'min_rooms' : 1,
+            'has_balcony' : 0,
+            'has_fireplace' : 0,
+            'has_elevator' : 0,
+            'not_bottom_floor' : 0,
+            'types' : [TYPE_TENANCY, TYPE_BRF],
+            'submit' : 1
+        }
+        
+        response = client.get('/search/', data=data)
+        self.assertContains(response, text=self.listing.o_street_address)
+        self.assertNotContains(response, text=self.other_listing.o_street_address)
+        
+        data = {
+            'text' : 'annan',
+            'county' : 'AB',
+            'max_rent' : '4000',
+            'min_area' : 33,
+            'min_rooms' : 1,
+            'has_balcony' : 0,
+            'has_fireplace' : 0,
+            'has_elevator' : 0,
+            'not_bottom_floor' : 0,
+            'types' : [TYPE_TENANCY, TYPE_BRF],
+            'submit' : 1
+        }
+        
+        response = client.get('/search/', data=data)
+        self.assertContains(response, text=self.other_listing.o_street_address)
         
 class ListingFindMatchesTests(TestCase):
     def setUp(self):

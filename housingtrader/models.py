@@ -95,9 +95,9 @@ class Listing(models.Model):
     w_has_elevator = models.BooleanField(verbose_name='Hiss')
     w_not_bottom_floor = models.BooleanField(verbose_name='Våning', choices=FLOOR_CHOICES)
     
-    def find_matches(self):
+    def listing_search(self):
         '''
-        Finds listings of other users where the offered parameters match this listing's wanted parameters
+        Finds listings where the offered parameters match this listing's wanted parameters
         '''
         
         wanted_types = str(self.w_types).split(',')
@@ -108,7 +108,7 @@ class Listing(models.Model):
             o_area__gte = self.w_min_area,
             o_rent__lte = self.w_max_rent,
             o_type__in = wanted_types
-        ).exclude(user = self.user)
+        )
         
         if self.w_brf_status is not None:
             matches = matches.filter(
@@ -126,8 +126,14 @@ class Listing(models.Model):
             
         if self.w_not_bottom_floor:
             matches = matches.filter(o_floor_no__gt = 0)
-            
         return matches
+    
+    def find_matches(self):
+        '''
+        Finds listings of other users where the offered parameters match this listing's wanted parameters
+        '''
+        
+        return self.listing_search().exclude(user = self.user)
     
     def find_reverse_matches(self):
         '''
