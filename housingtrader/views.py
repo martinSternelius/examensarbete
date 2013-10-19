@@ -9,6 +9,7 @@ from django.db import IntegrityError
 from housingtrader.forms import ListingOfferedForm, ListingWantedForm, CompleteListingForm
 from housingtrader.models import Listing, TradeRequest
 from django.db.models import Q
+from string import strip
 
 @login_required
 def index(request):
@@ -107,10 +108,12 @@ def search(request):
         
         results = search_listing.listing_search()
         
+        search_text = strip(request.GET['text'])
+        
         results = results.filter(
-            Q(o_description__icontains = request.GET['text'])
-            | Q(o_street_address__icontains = request.GET['text']) 
-            | Q(o_postal_town__icontains = request.GET['text'])
+            Q(o_description__icontains = search_text)
+            | Q(o_street_address__icontains = search_text) 
+            | Q(o_postal_town__icontains = search_text)
         )
         
         return render(request, 'housingtrader/search_results.html', {'results':results})

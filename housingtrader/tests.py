@@ -197,6 +197,27 @@ class ListingViewTests(TestCase):
         response = client.get('/search/', data=data)
         self.assertContains(response, text=self.other_listing.o_street_address)
         
+        '''
+        Assert that a search can be performed with empty text field
+        '''
+        data = {
+            'text' : '   ',
+            'county' : 'AB',
+            'max_rent' : 4000,
+            'min_area' : 33,
+            'min_rooms' : 1,
+            'has_balcony' : 0,
+            'has_fireplace' : 0,
+            'has_elevator' : 0,
+            'not_bottom_floor' : 0,
+            'types' : [TYPE_TENANCY, TYPE_BRF],
+            'submit' : 1
+        }
+        
+        response = client.get('/search/', data=data)
+        self.assertContains(response, text=self.listing.o_street_address)
+        self.assertContains(response, text=self.other_listing.o_street_address)
+        
 class ListingFindMatchesTests(TestCase):
     def setUp(self):
         test_listings = create_test_listings()
