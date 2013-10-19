@@ -2,17 +2,17 @@
 # Create your views here.
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from registration.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from housingtrader.forms import ListingOfferedForm, ListingWantedForm, CompleteListingForm
-from housingtrader.models import Listing
+from housingtrader.models import Listing, TradeRequest
 from django.db.models import Q
 
 @login_required
 def index(request):
     listings = Listing.objects.filter(user=request.user)
-    return render(request, 'housingtrader/index.html',  {'listings':listings})
+    trade_requests = TradeRequest.objects.filter(receiver__user=request.user, declined_by_receiver=0)
+    return render(request, 'housingtrader/index.html',  {'listings':listings, 'trade_requests':trade_requests})
 
 @login_required
 def create_listing(request):
