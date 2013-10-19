@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 
+{% block page_header %}Välkommen {{ user.first_name }}!{% endblock %}
+
 {% block main %}
-<h1>Välkommen {{ user.username }}!</h1>
 
 {% if listings %}
 	<h2>Dina annonser:</h2>

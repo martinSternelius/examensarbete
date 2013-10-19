@@ -1,6 +1,8 @@
 {% extends "base.html" %}
+
+{% block page_header %}Skapa din bytesannons{% endblock %}
+
 {% block main %}
-<h1>Skapa din bytesannons</h1>
 <form action="" method="post">
 {% csrf_token %}
 	<fieldset>

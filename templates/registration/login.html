@@ -1,6 +1,8 @@
 {% extends "base.html" %}
+
+{% block page_header %}Välkommen att logga in!{% endblock %}
+
 {% block main %}
-<h1>Välkommen att logga in!</h1>
 <form action="" method="post">
 {% csrf_token %}
 	<ul>

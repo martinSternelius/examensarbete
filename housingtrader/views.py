@@ -2,8 +2,10 @@
 # Create your views here.
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
+from django.db import IntegrityError
 from housingtrader.forms import ListingOfferedForm, ListingWantedForm, CompleteListingForm
 from housingtrader.models import Listing, TradeRequest
 from django.db.models import Q
@@ -56,19 +58,39 @@ def edit_listing(request, listing_id):
 
 @login_required
 def find_trades(request, listing_id):
-    listing = get_object_or_404(Listing, user=request.user, pk=listing_id)
-    matched_listings = listing.find_matches()
-    return render(request, 'housingtrader/find_trades.html', {'listing':listing, 'other_listings' : matched_listings})
+    my_listing = get_object_or_404(Listing, user=request.user, pk=listing_id)
+    mutual_matches = my_listing.find_mutual_matches()
+    basic_matches = my_listing.find_matches()
+    reverse_matches = my_listing.find_reverse_matches()
+    return render(request, 'housingtrader/find_trades.html', {'my_listing':my_listing, 'mutual_matches':mutual_matches ,'basic_matches':basic_matches, 'reverse_matches':reverse_matches})
 
 @login_required
 def detail(request, listing_id, other_listing_id):
+    my_listing = get_object_or_404(Listing, pk=listing_id, user=request.user)
     other_listing = get_object_or_404(Listing, pk=other_listing_id)
-    return render(request, 'housingtrader/detail.html', {'listing':other_listing})
+    trade_request = TradeRequest.objects.filter(requester=my_listing, receiver=other_listing).exists()
+    reverse_trade_request = TradeRequest.objects.filter(requester=other_listing, receiver=my_listing).exists()
+    return render(request, 'housingtrader/detail.html', {'my_listing':my_listing, 'listing':other_listing, 'trade_request':trade_request, 'reverse_trade_request':reverse_trade_request})
 
 @login_required
 def preview(request, listing_id):
     listing = get_object_or_404(Listing, pk=listing_id, user=request.user)
     return render(request, 'housingtrader/preview.html', {'listing':listing})
+
+def send_trade_request(request, listing_id, other_listing_id):
+    if listing_id == other_listing_id:
+        messages.warning(request, 'Du försökte göra en intresseanmälan för att byta en bostad mot sig själv. Knasboll!')
+        return HttpResponseRedirect(reverse('housingtrader:find_trades', args=[listing_id]))
+    
+    my_listing = Listing.objects.get(pk=listing_id)
+    other_listing = Listing.objects.get(pk=other_listing_id)
+    trade_request = TradeRequest(requester=my_listing, receiver=other_listing)
+    try:
+        trade_request.save()
+        messages.success(request, 'Intresseanmälan skickad')
+    except IntegrityError:
+        messages.warning(request, 'Du har redan gjort en intresseanmälan för det här bytet')
+    return HttpResponseRedirect(reverse('housingtrader:find_trades', args=[listing_id]))
 
 def search(request):
     if request.GET['submit']:

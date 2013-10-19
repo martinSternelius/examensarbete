@@ -1,2 +1,11 @@
 {% extends "housingtrader/detailbase.html" %}
-{% block additional %}<a href="">Anmäl intresse för denna bostad</a>{% endblock %}
+{% block functions %}
+	{% if trade_request %}
+		<p>Du har redan gjort en intresseanmälan för det här bytet.</p>
+	{% elif reverse_trade_request %}
+		<p>Den här annonsören har anmält intresse för din bostad. Gå <a href="">hit</a> för att se bytet!</p>
+	{% else %}	
+		<a href="{% url 'housingtrader:send_trade_request' my_listing.id listing.id %}">Anmäl intresse för att byta {{ my_listing }} mot denna bostad</a>
+		<p>När du gör en intresseanmälan får användaren tillgång till kontaktuppgifterna som du har angett.</p>
+	{% endif %}
+{% endblock %}

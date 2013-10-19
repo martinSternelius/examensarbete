@@ -1,10 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<title>{% block title %}Housingtrader{% endblock %}</title>
 	<meta charset="UTF-8" />
 </head>
 <body>
+
+<h1>{% block page_header %}{% endblock %}</h1>
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
 {% block main %}
-{% endblock %}	
+{% endblock %}
+
 </body>
 </html>
