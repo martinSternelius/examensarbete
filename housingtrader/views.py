@@ -65,6 +65,11 @@ def detail(request, listing_id, other_listing_id):
     other_listing = get_object_or_404(Listing, pk=other_listing_id)
     return render(request, 'housingtrader/detail.html', {'listing':other_listing})
 
+@login_required
+def preview(request, listing_id):
+    listing = get_object_or_404(Listing, pk=listing_id, user=request.user)
+    return render(request, 'housingtrader/preview.html', {'listing':listing})
+
 def search(request):
     if request.GET['submit']:
         search_listing = Listing()

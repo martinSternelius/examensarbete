@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block main %}
+
+<h1>{{ listing }}</h1>
+
+{% block additional %}{% endblock %}
+
+<h2>Finnes</h2>
+<ul class="offered">
+	<li>Bostadstyp: {{ listing.get_o_type_display }}</li>
+	<li>Adress: {{ listing.o_street_address }}</li>
+	<li>Postnummer: {{ listing.o_postal_code }}</li>
+	<li>Postort: {{ listing.o_postal_town }}</li>
+	<li>Län: {{ listing.get_o_county_display }}</li>
+	<li>Area: {{ listing.o_area}}</li>
+	<li>Antal rum: {{ listing.get_o_rooms_display}}</li>
+	<li>Hyra/Avgift: {{ listing.o_rent}}</li>
+	<li>Våning: {{ listing.o_floor_no}}</li>
+	<li>Blivande bostadsrätt: {{ listing.get_o_brf_status_display }}</li>
+	<li>Öppen spis/Kakelugn: {{ listing.o_has_fireplace|yesno:"Ja,Nej" }}</li>
+	<li>Balkong: {{ listing.o_has_balcony|yesno:"Ja,Nej" }}</li>
+	<li>Hiss: {{ listing.o_has_elevator|yesno:"Ja,Nej" }}</li>
+	<li class="description"><p>{{ listing.o_description }}</p></li>
+</ul>
+<h2>Sökes</h2>
+<ul class="wanted">
+	<li>Bostadstyp(er): {{ listing.get_w_types_display }} </li>
+	<li>Län: {{ listing.get_w_county_display }}</li>
+	<li>Minsta antal rum: {{ listing.get_w_min_rooms_display }}</li>
+	<li>Minsta area: {{ listing.w_min_area }}</li>
+	<li>Max hyra/avgift: {{ listing.w_max_rent }}</li>
+	<li>Blivande bostadsrätt: {{ listing.get_w_brf_status_display }}</li>
+	<li>Öppen spis/kakelugn: {{ listing.w_has_fireplace|yesno:"Ja,Inget krav" }}</li>
+	<li>Balkong: {{ listing.w_has_balcony|yesno:"Ja,Inget krav" }}</li>
+	<li>Hiss: {{ listing.w_has_elevator|yesno:"Ja,Inget krav" }}</li>
+	<li>Våning: {{ listing.get_w_not_bottom_floor_display }}</li>
+</ul>
+{% endblock %}

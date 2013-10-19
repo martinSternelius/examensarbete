@@ -16,9 +16,9 @@
 		<tbody>
 		{% for listing in listings %}
 			<tr>
-				<td>{{ listing }}</td>
-				<td><a href="{{listing.id}}/edit">.</a></td>
-				<td><a href="{{listing.id}}/find_trades">.</a></td>
+				<td><a href="{% url 'housingtrader:preview' listing.id %}">{{ listing }}</td>
+				<td><a href="{% url 'housingtrader:edit_listing' listing.id %}">.</a></td>
+				<td><a href="{% url 'housingtrader:find_trades' listing.id %}">.</a></td>
 			</tr>
 		{% endfor %}
 		</tbody>
@@ -34,7 +34,7 @@
 	{% for trade_request in trade_requests %}
 		<li>
 			<a href="{% url 'housingtrader:detail' trade_request.receiver.id trade_request.requester.id %}">{{ trade_request.requester.o_street_address }}</a>
-			bytes mot <a href="">{{ trade_request.receiver.o_street_address }}</a>
+			bytes mot <a href="{% url 'housingtrader:preview' trade_request.receiver.id %}">{{ trade_request.receiver.o_street_address }}</a>
 		</li>
 	{% endfor %}
 	</ul>
