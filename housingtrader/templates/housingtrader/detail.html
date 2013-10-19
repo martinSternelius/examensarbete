@@ -27,9 +27,9 @@
 	<li>Minsta area: {{ listing.w_min_area }}</li>
 	<li>Max hyra/avgift: {{ listing.w_max_rent }}</li>
 	<li>Blivande bostadsrätt: {{ listing.get_w_brf_status_display }}</li>
-	<li>Öppen spis/kakelugn: {{ listing.w_has_fireplace|yesno:"Ja,Nej" }}</li>
-	<li>Balkong: {{ listing.w_has_balcony|yesno:"Ja,Nej" }}</li>
-	<li>Hiss: {{ listing.w_has_elevator|yesno:"Ja,Nej" }}</li>
+	<li>Öppen spis/kakelugn: {{ listing.w_has_fireplace|yesno:"Ja,Inget krav" }}</li>
+	<li>Balkong: {{ listing.w_has_balcony|yesno:"Ja,Inget krav" }}</li>
+	<li>Hiss: {{ listing.w_has_elevator|yesno:"Ja,Inget krav" }}</li>
 	<li>Våning: {{ listing.get_w_not_bottom_floor_display }}</li>
 </ul>
 {% endblock %}
