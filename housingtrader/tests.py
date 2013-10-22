@@ -92,66 +92,100 @@ class ListingViewTests(TestCase):
         '''
         Assertion: A logged in user that sends valid POST data to create_listing will result in a listing correctly saved in the database.
         '''
+        listings = Listing.objects.all()
+        listings.delete()
+        
         client = Client()
         client.login(username='tester', password='password')
         
-        asserted_listing = Listing()
-        asserted_listing.o_area = 33
-        asserted_listing.o_brf_status = None
-        asserted_listing.o_county = 'AB'
-        asserted_listing.o_description = 'Skapa'
-        asserted_listing.o_floor_no = -1
-        asserted_listing.o_has_balcony = 1
-        asserted_listing.o_has_elevator = 0
-        asserted_listing.o_has_fireplace = 0
-        asserted_listing.o_postal_code = '16846'
-        asserted_listing.o_rent = 1722
-        asserted_listing.o_rooms = 2
-        asserted_listing.o_street_address = 'Klientvägen 1'
-        asserted_listing.o_postal_town = 'Stockholm'
-        asserted_listing.o_type = TYPE_BRF
-        asserted_listing.w_brf_status = None
-        asserted_listing.w_county = 'AB'
-        asserted_listing.w_has_balcony = False
-        asserted_listing.w_has_elevator = False
-        asserted_listing.w_has_fireplace = False
-        asserted_listing.w_max_rent = 5000
-        asserted_listing.w_min_area = 33
-        asserted_listing.w_min_rooms = 2
-        asserted_listing.w_not_bottom_floor = False
-        asserted_listing.w_types = ','.join([str(TYPE_TENANCY), str(TYPE_BRF)])
+        o_area = 33
+        o_brf_status = ''
+        o_county = 'AB'
+        o_description = 'Skapa'
+        o_floor_no = -1
+        o_has_balcony = 1
+        o_has_elevator = 1
+        o_has_fireplace = 1
+        o_postal_code = '16846'
+        o_rent = 2001
+        o_rooms = 2
+        o_street_address = 'Klientvägen 1'
+        o_postal_town = 'Stockholm'
+        o_type = TYPE_BRF
+        w_brf_status = ''
+        w_county = 'AB'
+        w_has_balcony = 0
+        w_has_elevator = 0
+        w_has_fireplace = 0
+        w_max_rent = 5000
+        w_min_area = 90
+        w_min_rooms = 2
+        w_not_bottom_floor = 0
+        w_types = [str(TYPE_TENANCY), str(TYPE_BRF)]
         
         data = {
-            'o_area' : 33,
-            'o_brf_status' : '',
-            'o_county' : 'AB',
-            'o_description' : 'Skapa',
-            'o_floor_no' : -1,
-            'o_has_balcony' : 1,
-            'o_has_elevator' : 0,
-            'o_has_fireplace' : 0,
-            'o_postal_code' : '16846',
-            'o_rent' : 1722,
-            'o_rooms' : 2,
-            'o_street_address' : 'Klientvägen 1',
-            'o_postal_town' : 'Stockholm',
-            'o_type' : TYPE_BRF,
-            'w_brf_status' : '',
-            'w_county' : 'AB',
-            'w_has_balcony' : 0,
-            'w_has_elevator' : 0,
-            'w_has_fireplace' : 0,
-            'w_max_rent' : 5000,
-            'w_min_area' : 33,
-            'w_min_rooms' : 2,
-            'w_not_bottom_floor' : 0,
-            'w_types' : [TYPE_TENANCY, TYPE_BRF]
+            'o_area' : o_area,
+            'o_brf_status' : o_brf_status,
+            'o_county' : o_county,
+            'o_description' : o_description,
+            'o_floor_no' : o_floor_no,
+            'o_has_balcony' : o_has_balcony,
+            'o_has_elevator' : o_has_elevator,
+            'o_has_fireplace' : o_has_fireplace,
+            'o_postal_code' : o_postal_code,
+            'o_rent' : o_rent,
+            'o_rooms' : o_rooms,
+            'o_street_address' : o_street_address,
+            'o_postal_town' : o_postal_town,
+            'o_type' : o_type,
+            'w_brf_status' : w_brf_status,
+            'w_county' : w_county,
+            'w_max_rent' : w_max_rent,
+            'w_min_area' : w_min_area,
+            'w_min_rooms' : w_min_rooms,
+            'w_not_bottom_floor' : w_not_bottom_floor,
+            'w_types' : w_types
         }
+        '''
+        Note that the fields for balcony, elevator and fireplace are represented by checkboxes. If any value is sent in these keys, even False or None, it will be saved as True.
+        Therefore we put no values in the data dictionary for those keys we want to save as False for this test.
+        '''
+        
         client.post(reverse('housingtrader:create_listing'), data)
         
-        listing = Listing.objects.get(o_description='Skapa')
-        listing.delete() # Sets pk to none, but keeps all other data, which should make it identical to the asserted listing
-        self.assertEqual(asserted_listing, listing)
+        '''
+        Here we filter listings on every parameter. This is to assert that every parameter gets saved correctly,
+        and helps us find on which parameter there is an error, if any.
+        '''
+        queryset = Listing.objects.filter(o_area = o_area)
+        queryset = queryset.filter(o_brf_status = None)
+        queryset = queryset.filter(o_county = o_county)
+        queryset = queryset.filter(o_description = o_description)
+        queryset = queryset.filter(o_floor_no = o_floor_no)
+        queryset = queryset.filter(o_has_balcony = o_has_balcony)
+        queryset = queryset.filter(o_has_elevator = o_has_elevator)
+        queryset = queryset.filter(o_has_fireplace = o_has_fireplace)
+        queryset = queryset.filter(o_postal_code = o_postal_code)
+        queryset = queryset.filter(o_rent = o_rent)
+        queryset = queryset.filter(o_rooms = o_rooms)
+        queryset = queryset.filter(o_street_address = o_street_address)
+        queryset = queryset.filter(o_postal_town = o_postal_town)
+        queryset = queryset.filter(o_type = o_type)
+        queryset = queryset.filter(w_brf_status = None)
+        queryset = queryset.filter(w_county  =w_county)
+        queryset = queryset.filter(w_has_balcony = w_has_balcony)
+        queryset = queryset.filter(w_has_elevator = w_has_elevator)
+        queryset = queryset.filter(w_has_fireplace = w_has_fireplace)
+        queryset = queryset.filter(w_max_rent = w_max_rent)
+        queryset = queryset.filter(w_min_area = w_min_area)
+        queryset = queryset.filter(w_min_rooms = w_min_rooms)
+        queryset = queryset.filter(w_not_bottom_floor = w_not_bottom_floor)
+        queryset = queryset.filter(w_types = ','.join(w_types))
+
+        listing = queryset.get()
+        
+        self.assertTrue(isinstance(listing, Listing))
+        self.assertTrue(listing.published)
         
     def test_search(self):
         client = Client()

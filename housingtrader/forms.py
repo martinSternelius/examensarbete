@@ -107,7 +107,7 @@ class CompleteListingForm(ModelForm):
     
     class Meta:
         model = Listing
-        exclude = ('user')
+        exclude = ('user', 'published')
         
 class SearchForm(Form):
     yes_or_none_choices = ((0, 'Inget krav'), (1, 'Ja'))
