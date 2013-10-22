@@ -212,6 +212,28 @@ class ListingViewTests(TestCase):
         self.assertContains(response, text=self.listing.o_street_address)
         self.assertContains(response, text=self.other_listing.o_street_address)
         
+        '''
+        Assert that an unpublished listing does not show up in a search
+        '''
+        self.listing.change_published_state()
+        data = {
+            'text' : '   ',
+            'county' : 'AB',
+            'max_rent' : 4000,
+            'min_area' : 33,
+            'min_rooms' : 1,
+            'has_balcony' : 0,
+            'has_fireplace' : 0,
+            'has_elevator' : 0,
+            'not_bottom_floor' : 0,
+            'types' : [TYPE_TENANCY, TYPE_BRF],
+            'submit' : 1
+        }
+        
+        response = client.get(reverse('housingtrader:search'), data=data)
+        self.assertNotContains(response, text=self.listing.o_street_address)
+        
+        
     def test_change_published_state(self):
         client = Client()
         client.login(username=self.user.username, password='password')
