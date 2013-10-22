@@ -25,8 +25,8 @@
 					<form action="{% url 'housingtrader:change_published_state' listing.id %}" method='post'>
 						{% csrf_token %}
 						<input type="submit" value="{{ listing.published|yesno:'Avpublicera,Publicera'}}" />
-					</form
-				></td>
+					</form>
+				</td>
 			</tr>
 		{% endfor %}
 		</tbody>
