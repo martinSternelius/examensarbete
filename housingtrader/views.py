@@ -87,19 +87,21 @@ def preview(request, listing_id):
     listing = get_object_or_404(Listing, pk=listing_id, user=request.user)
     return render(request, 'housingtrader/preview.html', {'listing':listing})
 
+@login_required
 def send_trade_request(request, listing_id, other_listing_id):
-    if listing_id == other_listing_id:
-        messages.warning(request, 'Du försökte göra en intresseanmälan för att byta en bostad mot sig själv. Knasboll!')
-        return HttpResponseRedirect(reverse('housingtrader:find_trades', args=[listing_id]))
-    
-    my_listing = Listing.objects.get(pk=listing_id)
-    other_listing = Listing.objects.get(pk=other_listing_id)
-    trade_request = TradeRequest(requester=my_listing, receiver=other_listing)
-    try:
-        trade_request.save()
-        messages.success(request, 'Intresseanmälan skickad')
-    except IntegrityError:
-        messages.warning(request, 'Du har redan gjort en intresseanmälan för det här bytet')
+    if request.method == 'POST':
+        if listing_id == other_listing_id:
+            messages.warning(request, 'Du försökte göra en intresseanmälan för att byta en bostad mot sig själv. Knasboll!')
+            return HttpResponseRedirect(reverse('housingtrader:find_trades', args=[listing_id]))
+        
+        my_listing = Listing.objects.get(pk=listing_id)
+        other_listing = Listing.objects.get(pk=other_listing_id)
+        trade_request = TradeRequest(requester=my_listing, receiver=other_listing)
+        try:
+            trade_request.save()
+            messages.success(request, 'Intresseanmälan skickad')
+        except IntegrityError:
+            messages.warning(request, 'Du har redan gjort en intresseanmälan för det här bytet')
     return HttpResponseRedirect(reverse('housingtrader:find_trades', args=[listing_id]))
 
 def search(request):
