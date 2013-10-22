@@ -1,15 +1,9 @@
 # -*- coding: utf-8 -*- 
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
-
-Replace this with more appropriate tests for your application.
-"""
-
 from django.test import TestCase
 from django.test.client import Client
 from registration.models import User
 from housingtrader.models import Listing, TradeRequest, TYPE_BRF, TYPE_TENANCY, TYPE_HOUSE, BRF_NONE, BRF_FORMED
+from django.core.urlresolvers import reverse
 
 def create_test_users():
     user = User.objects.create_user('tester', 'test@example.com', 'password')
@@ -153,7 +147,7 @@ class ListingViewTests(TestCase):
             'w_not_bottom_floor' : 0,
             'w_types' : [TYPE_TENANCY, TYPE_BRF]
         }
-        client.post('/create_listing/', data)
+        client.post(reverse('housingtrader:create_listing'), data)
         
         listing = Listing.objects.get(o_description='Skapa')
         listing.delete() # Sets pk to none, but keeps all other data, which should make it identical to the asserted listing
@@ -176,7 +170,7 @@ class ListingViewTests(TestCase):
             'submit' : 1
         }
         
-        response = client.get('', data=data)
+        response = client.get(reverse('housingtrader:search'), data=data)
         self.assertContains(response, text=self.listing.o_street_address)
         self.assertNotContains(response, text=self.other_listing.o_street_address)
         
@@ -194,7 +188,7 @@ class ListingViewTests(TestCase):
             'submit' : 1
         }
         
-        response = client.get('', data=data)
+        response = client.get(reverse('housingtrader:search'), data=data)
         self.assertContains(response, text=self.other_listing.o_street_address)
         
         '''
@@ -214,7 +208,7 @@ class ListingViewTests(TestCase):
             'submit' : 1
         }
         
-        response = client.get('', data=data)
+        response = client.get(reverse('housingtrader:search'), data=data)
         self.assertContains(response, text=self.listing.o_street_address)
         self.assertContains(response, text=self.other_listing.o_street_address)
         

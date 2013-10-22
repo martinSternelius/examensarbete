@@ -1,13 +1,7 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
-
-Replace this with more appropriate tests for your application.
-"""
-
 from django.test import TestCase
 from registration.models import User
 from django.test.client import Client
+from django.core.urlresolvers import reverse
 
 
 class RegistrationViewTests(TestCase):
@@ -32,7 +26,7 @@ class RegistrationViewTests(TestCase):
             'phone_number':phone_number
         }
         
-        client.post('/registration/', data=data)
+        client.post(reverse('register'), data=data)
         
         asserted_user = User(username=username, email=email, first_name=first_name, last_name=last_name, phone_number=phone_number)
         actual_user = User.objects.get(username=username)
