@@ -1,10 +1,13 @@
 {% extends "base.html" %}
 
+{% block page_header %} Välkommen till Housingtrader {% endblock %}
+
 {% block main %}
-<h1>Välkommen {{ user.username }}!</h1>
+
+{% include "housingtrader/search_form.html" %}
 
 {% if results %}
-	<h2>Hittade byten:</h2>
+	<h2>Hittade Annonser:</h2>
 	<table>
 		<thead>
 			<tr>

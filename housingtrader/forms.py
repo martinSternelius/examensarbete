@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*- 
-from django.forms import ModelForm, MultipleChoiceField, CharField
+from django.forms import Form, ModelForm, MultipleChoiceField, CharField, IntegerField, ChoiceField
 from django.forms.widgets import CheckboxSelectMultiple
-from housingtrader.models import Listing, HOUSING_TYPE_CHOICES, get_listing_fields_by_prefix
+from housingtrader.models import Listing, HOUSING_TYPE_CHOICES, FLOOR_CHOICES, get_listing_fields_by_prefix
 from django.contrib.localflavor.se.forms import SEPostalCodeField, SECountySelect
 
 def get_wanted_fields():
@@ -107,3 +107,17 @@ class CompleteListingForm(ModelForm):
     class Meta:
         model = Listing
         exclude = ('user')
+        
+class SearchForm(Form):
+    yes_or_none_choices = ((0, 'Inget krav'), (1, 'Ja'))
+    
+    text = CharField(label='Fritext', required=False)
+    county = CharField(widget=SECountySelect, label='Län')
+    types = CSIMultipleChoiceField(label='Bostadstyp(er)', choices=HOUSING_TYPE_CHOICES)
+    min_area = IntegerField(label='Minsta yta (kvm)')
+    min_rooms = IntegerField(label='Minsta antal rum')
+    max_rent = IntegerField(label='Max hyra/avgift')
+    has_fireplace = ChoiceField(label='Öppen spis', choices=yes_or_none_choices)
+    has_balcony = ChoiceField(label='Balkong', choices=yes_or_none_choices)
+    has_elevator = ChoiceField(label='Hiss', choices=yes_or_none_choices)
+    not_bottom_floor = ChoiceField(label='Våning', choices=FLOOR_CHOICES)

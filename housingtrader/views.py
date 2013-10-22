@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.db import IntegrityError
-from housingtrader.forms import ListingOfferedForm, ListingWantedForm, CompleteListingForm
+from housingtrader.forms import ListingOfferedForm, ListingWantedForm, CompleteListingForm, SearchForm
 from housingtrader.models import Listing, TradeRequest
 from django.db.models import Q
 from string import strip
@@ -94,26 +94,33 @@ def send_trade_request(request, listing_id, other_listing_id):
     return HttpResponseRedirect(reverse('housingtrader:find_trades', args=[listing_id]))
 
 def search(request):
-    if request.GET['submit']:
-        search_listing = Listing()
-        search_listing.w_county = request.GET['county']
-        search_listing.w_types = ','.join(request.GET.getlist('types'))
-        search_listing.w_min_area = request.GET['min_area']
-        search_listing.w_min_rooms = request.GET['min_rooms']
-        search_listing.w_max_rent = request.GET['max_rent']
-        search_listing.w_has_fireplace = int(request.GET['has_fireplace'])
-        search_listing.w_has_balcony = int(request.GET['has_balcony'])
-        search_listing.w_has_elevator = int(request.GET['has_elevator'])
-        search_listing.w_not_bottom_floor = int(request.GET['not_bottom_floor'])
-        
-        results = search_listing.listing_search()
-        
-        search_text = strip(request.GET['text'])
-        
-        results = results.filter(
-            Q(o_description__icontains = search_text)
-            | Q(o_street_address__icontains = search_text) 
-            | Q(o_postal_town__icontains = search_text)
-        )
-        
-        return render(request, 'housingtrader/search_results.html', {'results':results})
+    if request.GET.get('submit'):
+        form = SearchForm(request.GET)
+        try:
+            form.is_valid()
+            search_listing = Listing()
+            search_listing.w_county = request.GET['county']
+            search_listing.w_types = ','.join(request.GET.getlist('types'))
+            search_listing.w_min_area = request.GET['min_area']
+            search_listing.w_min_rooms = request.GET['min_rooms']
+            search_listing.w_max_rent = request.GET['max_rent']
+            search_listing.w_has_fireplace = int(request.GET['has_fireplace'])
+            search_listing.w_has_balcony = int(request.GET['has_balcony'])
+            search_listing.w_has_elevator = int(request.GET['has_elevator'])
+            search_listing.w_not_bottom_floor = int(request.GET['not_bottom_floor'])
+            
+            results = search_listing.listing_search()
+            
+            search_text = strip(request.GET['text'])
+            
+            results = results.filter(
+                Q(o_description__icontains = search_text)
+                | Q(o_street_address__icontains = search_text) 
+                | Q(o_postal_town__icontains = search_text)
+            )
+            
+            return render(request, 'housingtrader/search_results.html', {'results':results, 'form':form})
+        except ValueError:
+            return render(request, 'housingtrader/search_base.html', {'form':form})
+    else:
+        return render(request, 'housingtrader/search_base.html', {'form':SearchForm()})

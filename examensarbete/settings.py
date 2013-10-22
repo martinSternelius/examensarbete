@@ -145,5 +145,5 @@ LOGGING = {
 }
 
 LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/dashboard/'
 AUTH_USER_MODEL = 'registration.User'
