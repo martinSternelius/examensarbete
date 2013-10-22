@@ -31,11 +31,20 @@ def create_listing(request):
                 wanted_form.is_valid()
                 complete_form = CompleteListingForm(data=request.POST, user=request.user)
                 complete_form.save()
-                return HttpResponseRedirect(reverse('housingtrader-index:index'))
+                return HttpResponseRedirect(reverse('housingtrader:index'))
             except:
                 pass
         
     return render(request, 'housingtrader/create_listing.html', {'offered_form' : offered_form, 'wanted_form' : wanted_form})
+
+@login_required
+def change_published_state(request, listing_id):
+    if request.method == 'POST':
+        exists = Listing.objects.filter(pk=listing_id, user=request.user).exists()
+        if exists:
+            listing = Listing.objects.get(pk=listing_id, user=request.user)
+            listing.change_published_state()
+    return HttpResponseRedirect(reverse('housingtrader:index'))
 
 @login_required
 def edit_listing(request, listing_id):

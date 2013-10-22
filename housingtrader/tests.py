@@ -212,6 +212,14 @@ class ListingViewTests(TestCase):
         self.assertContains(response, text=self.listing.o_street_address)
         self.assertContains(response, text=self.other_listing.o_street_address)
         
+    def test_change_published_state(self):
+        client = Client()
+        client.login(username=self.user.username, password='password')
+        client.post(reverse('housingtrader:change_published_state', args=[self.listing.pk]))
+        
+        listing_after_unpublish = Listing.objects.get(pk=self.listing.pk)
+        self.assertFalse(listing_after_unpublish.published)
+        
 class ListingFindMatchesTests(TestCase):
     def setUp(self):
         test_listings = create_test_listings()
@@ -321,6 +329,12 @@ class ListingFindMatchesTests(TestCase):
         
         self.assertFalse(unmatched_listing in self.listing.find_matches())
         
+    def test_should_not_match_because_of_unpublished(self):
+        unmatched_listing = self.other_listing
+        unmatched_listing.change_published_state()
+        
+        self.assertFalse(unmatched_listing in self.listing.find_matches())
+        
     def test_reverse_should_match(self):
         matched_listing = self.other_listing
         self.assertTrue(matched_listing in self.listing.find_reverse_matches())
@@ -403,6 +417,12 @@ class ListingFindMatchesTests(TestCase):
         unmatched_listing = self.other_listing
         unmatched_listing.user = self.user
         unmatched_listing.save()
+        
+        self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
+        
+    def test_reverse_should_not_match_because_of_unpublished(self):
+        unmatched_listing = self.other_listing
+        unmatched_listing.change_published_state()
         
         self.assertFalse(unmatched_listing in self.listing.find_reverse_matches())
         

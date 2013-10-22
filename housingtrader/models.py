@@ -68,6 +68,7 @@ class Listing(models.Model):
     creation_datetime = models.DateTimeField(auto_now_add=True)
     
     user = models.ForeignKey(AUTH_USER_MODEL)
+    published = models.BooleanField(default=True)
     
     o_county = CharField(max_length=255, verbose_name='Län', choices=COUNTY_CHOICES)
     o_street_address = models.CharField(max_length=255, verbose_name='Gatuadress')
@@ -97,7 +98,7 @@ class Listing(models.Model):
     
     def listing_search(self):
         '''
-        Finds listings where the offered parameters match this listing's wanted parameters
+        Finds published listings where the offered parameters match this listing's wanted parameters
         '''
         
         wanted_types = str(self.w_types).split(',')
@@ -107,7 +108,8 @@ class Listing(models.Model):
             o_rooms__gte = self.w_min_rooms,
             o_area__gte = self.w_min_area,
             o_rent__lte = self.w_max_rent,
-            o_type__in = wanted_types
+            o_type__in = wanted_types,
+            published = True
         )
         
         if self.w_brf_status is not None:
@@ -126,6 +128,7 @@ class Listing(models.Model):
             
         if self.w_not_bottom_floor:
             matches = matches.filter(o_floor_no__gt = 0)
+        
         return matches
     
     def find_matches(self):
@@ -133,11 +136,11 @@ class Listing(models.Model):
         Finds listings of other users where the offered parameters match this listing's wanted parameters
         '''
         
-        return self.listing_search().exclude(user = self.user)
+        return self.listing_search().exclude(user=self.user)
     
     def find_reverse_matches(self):
         '''
-        Finds listings of other users where the wanted parameters match this listing's offered parameters
+        Finds published listings of other users where the wanted parameters match this listing's offered parameters
         '''
         
         matches = Listing.objects.filter(
@@ -147,7 +150,8 @@ class Listing(models.Model):
             w_max_rent__gte = self.o_rent,
             w_has_fireplace__lte = self.o_has_fireplace,
             w_has_elevator__lte = self.o_has_elevator,
-            w_has_balcony__lte = self.w_has_balcony
+            w_has_balcony__lte = self.w_has_balcony,
+            published = True
         ).exclude(user = self.user)
         
         final_matches = []
@@ -176,6 +180,10 @@ class Listing(models.Model):
         reverse_matches = self.find_reverse_matches()
         
         return set(matches).intersection(reverse_matches)
+    
+    def change_published_state(self):
+        self.published = not bool(self.published)
+        self.save()
     
     def get_w_types_display(self):
         '''

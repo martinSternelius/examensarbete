@@ -12,6 +12,7 @@
 				<td>Annons</td>
 				<td>Redigera</td>
 				<td>Hitta byten</td>
+				<td>Ändra status</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -20,6 +21,12 @@
 				<td><a href="{% url 'housingtrader:preview' listing.id %}">{{ listing }}</td>
 				<td><a href="{% url 'housingtrader:edit_listing' listing.id %}">.</a></td>
 				<td><a href="{% url 'housingtrader:find_trades' listing.id %}">.</a></td>
+				<td>
+					<form action="{% url 'housingtrader:change_published_state' listing.id %}" method='post'>
+						{% csrf_token %}
+						<input type="submit" value="{{ listing.published|yesno:'Avpublicera,Publicera'}}" />
+					</form
+				></td>
 			</tr>
 		{% endfor %}
 		</tbody>

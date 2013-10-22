@@ -66,10 +66,11 @@ class ListingOfferedForm(ModelForm):
 
     class Meta:
         '''
-        User field should also be excluded
+        User and published fields should also be excluded
         '''
         excluded_fields = get_wanted_fields()
         excluded_fields.append('user')
+        excluded_fields.append('published')
         
         model = Listing
         exclude = excluded_fields
