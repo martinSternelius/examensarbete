@@ -176,7 +176,7 @@ class ListingViewTests(TestCase):
             'submit' : 1
         }
         
-        response = client.get('/search/', data=data)
+        response = client.get('', data=data)
         self.assertContains(response, text=self.listing.o_street_address)
         self.assertNotContains(response, text=self.other_listing.o_street_address)
         
@@ -194,7 +194,7 @@ class ListingViewTests(TestCase):
             'submit' : 1
         }
         
-        response = client.get('/search/', data=data)
+        response = client.get('', data=data)
         self.assertContains(response, text=self.other_listing.o_street_address)
         
         '''
@@ -214,7 +214,7 @@ class ListingViewTests(TestCase):
             'submit' : 1
         }
         
-        response = client.get('/search/', data=data)
+        response = client.get('', data=data)
         self.assertContains(response, text=self.listing.o_street_address)
         self.assertContains(response, text=self.other_listing.o_street_address)
         
