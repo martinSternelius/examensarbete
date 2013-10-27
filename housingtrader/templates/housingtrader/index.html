@@ -13,6 +13,7 @@
 				<td>Redigera</td>
 				<td>Hitta byten</td>
 				<td>Ändra status</td>
+				<td>Ta bort</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -25,6 +26,11 @@
 					<form action="{% url 'housingtrader:change_published_state' listing.id %}" method='post'>
 						{% csrf_token %}
 						<input type="submit" value="{{ listing.published|yesno:'Avpublicera,Publicera'}}" />
+					</form>
+				</td>
+				<td>
+					<form action="{% url 'housingtrader:delete_listing' listing.id %}" method='get'>
+						<input type="submit" value="x" />
 					</form>
 				</td>
 			</tr>

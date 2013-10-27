@@ -2,10 +2,12 @@
 # Create your views here.
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.contrib import messages
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
 from django.db import IntegrityError
+from django.views.generic.edit import DeleteView
 from housingtrader.forms import ListingOfferedForm, ListingWantedForm, CompleteListingForm, SearchForm
 from housingtrader.models import Listing, TradeRequest
 from django.db.models import Q
@@ -103,6 +105,18 @@ def send_trade_request(request, listing_id, other_listing_id):
         except IntegrityError:
             messages.warning(request, 'Du har redan gjort en intresseanmälan för det här bytet')
     return HttpResponseRedirect(reverse('housingtrader:find_trades', args=[listing_id]))
+
+class ListingDelete(DeleteView):
+    model = Listing
+    success_url = reverse_lazy('housingtrader:index')
+    
+    def get_object(self):
+        queryset = Listing.objects.filter(user=self.request.user)
+        return DeleteView.get_object(self, queryset=queryset)
+    
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ListingDelete, self).dispatch(*args, **kwargs)
 
 def search(request):
     if request.GET.get('submit'):

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block page_header %}Är du säker på att du vill ta bort annonsen för {{ listing }}?{% endblock %}
+
+{% block main %}
+<form action="{% url 'housingtrader:delete_listing' listing.pk %}" method="post">
+	{% csrf_token %}
+	<input type="submit" value="Ja, ta bort den!" />
+</form>
+<p><a href="{% url 'housingtrader:index' %}">Nej, jag har ångrat mig!</a></p>
+{% endblock %}
