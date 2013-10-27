@@ -1,23 +1,26 @@
 <!DOCTYPE html>
+{% load staticfiles %}
 <html>
 <head>
 	<title>{% block title %}Housingtrader{% endblock %}</title>
+	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+	{% block extra_css %}{% endblock %}
 	<meta charset="UTF-8" />
 </head>
 <body>
-
-<h1>{% block page_header %}{% endblock %}</h1>
-
-{% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
-
-{% block main %}
-{% endblock %}
-
+    <div id="mainwrapper">
+        <h1>{% block page_header %}{% endblock %}</h1>
+        
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li>{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        
+        {% block main %}
+        {% endblock %}
+    </div>
 </body>
 </html>
