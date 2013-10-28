@@ -22,7 +22,7 @@
 		<tbody>
 		{% for listing in results %}
 			<tr>
-				<td><a href="">{{ listing }}</a></td>
+				<td><a href="{% url 'housingtrader:public_detail' listing.id %}">{{ listing }}</a></td>
 				<td>{{ listing.o_postal_code }}</td>
 				<td>{{ listing.o_postal_town }}</td>
 				<td>{{ listing.get_o_county_display }}</td>

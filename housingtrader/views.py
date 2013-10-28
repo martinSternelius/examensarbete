@@ -149,3 +149,7 @@ def search(request):
             return render(request, 'housingtrader/search_base.html', {'form':form})
     else:
         return render(request, 'housingtrader/search_base.html', {'form':SearchForm()})
+    
+def public_detail(request, listing_id):
+    listing = get_object_or_404(Listing, pk=listing_id)
+    return render(request, 'housingtrader/public_detail.html', {'listing':listing})

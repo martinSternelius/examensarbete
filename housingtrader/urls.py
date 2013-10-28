@@ -18,6 +18,7 @@ urlpatterns = patterns('',
     url(r'^(?P<listing_id>\d+)/(?P<other_listing_id>\d+)/detail', views.detail, name='detail'),
     url(r'^(?P<listing_id>\d+)/(?P<other_listing_id>\d+)/send_trade_request', views.send_trade_request, name='send_trade_request'),
     url(r'^(?P<listing_id>\d+)/preview', views.preview, name='preview'),
+    url(r'^(?P<listing_id>\d+)/public_detail', views.public_detail, name='public_detail'),
 )
 
 

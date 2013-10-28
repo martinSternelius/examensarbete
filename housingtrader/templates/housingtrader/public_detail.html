@@ -1,0 +1,6 @@
+{% extends "housingtrader/detailbase.html" %}
+{% block functions %}
+    {% if not user.is_authenticated %}
+	    <p>Intresserad av den här bostaden? <a href="{% url 'register' %}">Registrera ett konto</a> och sätt igång med att skapa din egen bytesannons!</p>
+    {% endif %}
+{% endblock %}
