@@ -3,3 +3,13 @@
 	margin: 0 auto;
 	font-family: Verdana, Arial, sans-serif;
 }
+
+ul.user_functions {
+	padding-left: 0;
+}
+
+ul.user_functions li {
+	display: inline;
+	list-style-type: none;
+	font-size: 9px;
+}

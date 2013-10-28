@@ -11,6 +11,17 @@
     <div id="mainwrapper">
         <h1>{% block page_header %}{% endblock %}</h1>
         
+        <ul class="user_functions">
+            <li><a href="{% url 'housingtrader:search' %}">Startsidan</a></li>
+            {% if user.is_authenticated %}
+            <li><a href="{% url 'housingtrader:index' %}">Dashboard</a></li>
+            <li><a href="{% url 'logout' %}">Logga ut</a></li>
+            {% else %}
+            <li><a href="{% url 'login' %}">Logga in</a></li>
+            <li><a href="{% url 'register' %}">Registrera konto</a></li>
+            {% endif %}
+        </ul>
+        
         {% if messages %}
         <ul class="messages">
             {% for message in messages %}
