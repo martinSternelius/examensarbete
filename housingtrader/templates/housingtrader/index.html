@@ -47,8 +47,8 @@
 	<ul>
 	{% for trade_request in trade_requests %}
 		<li>
-			<a href="{% url 'housingtrader:detail' trade_request.receiver.id trade_request.requester.id %}">{{ trade_request.requester.o_street_address }}</a>
-			bytes mot <a href="{% url 'housingtrader:preview' trade_request.receiver.id %}">{{ trade_request.receiver.o_street_address }}</a>
+			<a href="{% url 'housingtrader:trade_request_detail' trade_request.requester.id trade_request.receiver.id %}"><strong>{{ trade_request.requester.o_street_address }}</strong>
+			bytes mot <strong>{{ trade_request.receiver.o_street_address }}</strong></a>
 		</li>
 	{% endfor %}
 	</ul>

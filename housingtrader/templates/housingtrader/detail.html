@@ -1,9 +1,9 @@
 {% extends "housingtrader/detailbase.html" %}
 {% block functions %}
-	{% if trade_request %}
+	{% if trade_request_exists %}
 		<p>Du har redan gjort en intresseanmälan för det här bytet.</p>
-	{% elif reverse_trade_request %}
-		<p>Den här annonsören har anmält intresse för din bostad. Gå <a href="">hit</a> för att se bytet!</p>
+	{% elif reverse_trade_request_exists %}
+		<p>Den här annonsören har anmält intresse för din bostad. Gå <a href="{% url 'housingtrader:trade_request_detail' listing.id my_listing.id %}">hit</a> för att se bytet!</p>
 	{% elif my_listing.user == listing.user %}
 		<p>Detta är din egen bostadsannons.</p>
 	{% else %}

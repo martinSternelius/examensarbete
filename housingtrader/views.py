@@ -16,7 +16,7 @@ from string import strip
 @login_required
 def index(request):
     listings = Listing.objects.filter(user=request.user)
-    trade_requests = TradeRequest.objects.filter(receiver__user=request.user, declined_by_receiver=0)
+    trade_requests = TradeRequest.objects.filter(receiver__user=request.user, declined_by_receiver=False)
     return render(request, 'housingtrader/index.html',  {'listings':listings, 'trade_requests':trade_requests})
 
 @login_required
@@ -82,7 +82,7 @@ def detail(request, listing_id, other_listing_id):
     other_listing = get_object_or_404(Listing, pk=other_listing_id)
     trade_request = TradeRequest.objects.filter(requester=my_listing, receiver=other_listing).exists()
     reverse_trade_request = TradeRequest.objects.filter(requester=other_listing, receiver=my_listing).exists()
-    return render(request, 'housingtrader/detail.html', {'my_listing':my_listing, 'listing':other_listing, 'trade_request':trade_request, 'reverse_trade_request':reverse_trade_request})
+    return render(request, 'housingtrader/detail.html', {'my_listing':my_listing, 'listing':other_listing, 'trade_request_exists':trade_request, 'reverse_trade_request_exists':reverse_trade_request})
 
 @login_required
 def preview(request, listing_id):
@@ -96,15 +96,36 @@ def send_trade_request(request, listing_id, other_listing_id):
             messages.warning(request, 'Du försökte göra en intresseanmälan för att byta en bostad mot sig själv. Knasboll!')
             return HttpResponseRedirect(reverse('housingtrader:find_trades', args=[listing_id]))
         
-        my_listing = Listing.objects.get(pk=listing_id)
+        my_listing = Listing.objects.get(pk=listing_id, user=request.user)
         other_listing = Listing.objects.get(pk=other_listing_id)
         trade_request = TradeRequest(requester=my_listing, receiver=other_listing)
         try:
             trade_request.save()
-            messages.success(request, 'Intresseanmälan skickad')
+            messages.success(request, 'Intresseanmälan skickad.')
         except IntegrityError:
-            messages.warning(request, 'Du har redan gjort en intresseanmälan för det här bytet')
+            messages.warning(request, 'Du har redan gjort en intresseanmälan för det här bytet.')
     return HttpResponseRedirect(reverse('housingtrader:find_trades', args=[listing_id]))
+
+@login_required
+def trade_request_detail(request, requester_id, receiver_id):
+    receiver = get_object_or_404(Listing, pk=receiver_id, user=request.user)
+    requester = get_object_or_404(Listing, pk=requester_id)
+    trade_request = get_object_or_404(TradeRequest, requester=requester, receiver=receiver)
+    print trade_request.declined_by_receiver
+    return render(request, 'housingtrader/trade_request_detail.html', {'requester':requester, 'receiver':receiver, 'trade_request':trade_request})
+
+@login_required
+def trade_request_decline(request, requester_id, receiver_id):
+    if request.method == 'POST':
+        receiver = get_object_or_404(Listing, pk=receiver_id, user=request.user)
+        requester = get_object_or_404(Listing, pk=requester_id)
+        trade_request = get_object_or_404(TradeRequest, requester=requester, receiver=receiver)
+        trade_request.declined_by_receiver = True
+        trade_request.save()
+        messages.success(request, 'Du tackade nej till bytesförslaget.')
+    
+    return HttpResponseRedirect(reverse('housingtrader:index'))
+    
 
 class ListingDelete(DeleteView):
     model = Listing

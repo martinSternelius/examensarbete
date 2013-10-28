@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block page_header %}Mottaget Bytesförslag{% endblock %}
+
+{% block main %}
+<h2>Användaren {{ requester.user.get_full_name }} vill byta följande bostad:</h2>
+<ul class="requester">
+	<li>Bostadstyp: {{ requester.get_o_type_display }}</li>
+	<li>Adress: {{ requester.o_street_address }}</li>
+	<li>Postnummer: {{ requester.o_postal_code }}</li>
+	<li>Postort: {{ requester.o_postal_town }}</li>
+	<li>Län: {{ requester.get_o_county_display }}</li>
+	<li>Area: {{ requester.o_area }}</li>
+	<li>Antal rum: {{ requester.get_o_rooms_display}}</li>
+	<li>Hyra/Avgift: {{ requester.o_rent }}</li>
+	<li>Våning: {{ requester.o_floor_no }}</li>
+	<li>Blivande bostadsrätt: {{ requester.get_o_brf_status_display }}</li>
+	<li>Öppen spis/Kakelugn: {{ requester.o_has_fireplace|yesno:"Ja,Nej" }}</li>
+	<li>Balkong: {{ requester.o_has_balcony|yesno:"Ja,Nej" }}</li>
+	<li>Hiss: {{ requester.o_has_elevator|yesno:"Ja,Nej" }}</li>
+	<li class="description"><p>{{ requester.o_description }}</p></li>
+</ul>
+<h2>Mot din bostad:</h2>
+<ul class="receiver">
+    <li>Bostadstyp: {{ receiver.get_o_type_display }}</li>
+    <li>Adress: {{ receiver.o_street_address }}</li>
+    <li>Postnummer: {{ receiver.o_postal_code }}</li>
+    <li>Postort: {{ receiver.o_postal_town }}</li>
+    <li>Län: {{ receiver.get_o_county_display }}</li>
+    <li>Area: {{ receiver.o_area }}</li>
+    <li>Antal rum: {{ receiver.get_o_rooms_display }}</li>
+    <li>Hyra/Avgift: {{ receiver.o_rent }}</li>
+    <li>Våning: {{ receiver.o_floor_no }}</li>
+    <li>Blivande bostadsrätt: {{ receiver.get_o_brf_status_display }}</li>
+    <li>Öppen spis/Kakelugn: {{ receiver.o_has_fireplace|yesno:"Ja,Nej" }}</li>
+    <li>Balkong: {{ receiver.o_has_balcony|yesno:"Ja,Nej" }}</li>
+    <li>Hiss: {{ receiver.o_has_elevator|yesno:"Ja,Nej" }}</li>
+    <li class="description"><p>{{ receiver.o_description }}</p></li>
+</ul>
+
+<h2>Användarens kontaktuppgifter</h2>
+<ul class="contactinfo">
+    <li>E-post: {{ requester.user.email }}</li>
+    <li>Telefonnummer: {{ requester.user.phone_number }}</li>
+</ul>
+{% if trade_request.declined_by_receiver %}
+    <p>Du har tackat nej till det här bytesförslaget, men du kan fortfarande kontakta användaren om du har ångrat dig.</p>
+{% else %}
+    <form action="{% url 'housingtrader:trade_request_decline' requester.id receiver.id %}" method="post">
+        {% csrf_token %}
+        <input type="submit" value="Tacka nej till bytet" />
+    </form>
+{% endif %}
+{% endblock %}
