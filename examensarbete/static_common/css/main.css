@@ -1,11 +1,8 @@
+/**
+ * 	General rules
+ */
 td {
 	padding-right: 10px;
-}
-
-#mainwrapper {
-	width: 800px;
-	margin: 0 auto;
-	font-family: Verdana, Arial, sans-serif;
 }
 
 ul.user_functions {
@@ -16,4 +13,13 @@ ul.user_functions li {
 	display: inline;
 	list-style-type: none;
 	font-size: 9px;
+}
+
+/**
+ * 	Main wrapper rules
+ */
+#mainwrapper {
+	width: 800px;
+	margin: 0 auto;
+	font-family: Verdana, Arial, sans-serif;
 }

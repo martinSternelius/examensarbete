@@ -3,18 +3,28 @@
 {% block page_header %}Skapa din bytesannons{% endblock %}
 
 {% block main %}
-<form action="" method="post">
+<form id="create_listing_form" action="" method="post">
 {% csrf_token %}
 	<fieldset>
 		<legend>Finnes</legend>
 		<ul>
-			{{ offered_form.as_ul }}
+	    {% for field in offered_form %}
+	        <li class="{{ field.name }}">
+	           {{ field.label_tag }} {{ field }} {{ field.help_text }}
+	           {{ field.errors }}
+	       </li>
+	    {% endfor %}
 		</ul>
 	</fieldset>
 	<fieldset>
 		<legend>Sökes</legend>
 		<ul>
-			{{ wanted_form.as_ul }}
+	    {% for field in wanted_form %}
+	        <li class="{{ field.id_for_label }}">
+	           {{ field.label_tag }} {{ field }} {{ field.help_text }}
+	           {{ field.errors }}
+	       </li>
+	    {% endfor %}
 		</ul>
 	</fieldset>
 	<input type="submit" value="Spara" />

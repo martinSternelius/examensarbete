@@ -1,39 +1,59 @@
+/**
+ * 	General rules
+ */
+form, form select, form input {
+	font-size: 10px;
+}
+
+form ul > li {
+	margin: 10px 0;
+}
+
+legend {
+	font-size: 14px;
+}
+
+ul.errorlist {
+	list-style-type: disc;
+	padding-left: 10px;
+}
+
+ul.errorlist li {
+	display: inline;
+	color: red;
+}
+
+/**
+ * 	Search form rules
+ */
 #search_form {
 	font-size: 10px;
 }
 
 #search_form ul {
-	display: inline;
 	list-style-type: none;
 	padding-left: 0;
 }
 
-#search_form ul.errorlist {
-	list-style-type: disc;
-	padding-left: 10px;
-}
-
-#search_form ul.errorlist li {
-	display: inline;
-	color: red;
-}
-
-#search_form select {
-	font-size: 10px;
-}
-
-#search_form ul > li {
-	margin: 15px 0;
-}
-
-#search_form li.id_text input {
+#search_form li.text input {
 	width: 400px;
 }
 
-#search_form li.id_text label {
+#search_form li.text label {
 	display: block;
 }
 
-#search_form li.id_types_0 li {
+#search_form li.types li {
 	display: inline;
+}
+
+/**
+ * 	Create listing form rules
+ */
+#create_listing_form label {
+	font-weight: bold;
+}
+
+#create_listing_form li.o_description label {
+	display:block;
 }

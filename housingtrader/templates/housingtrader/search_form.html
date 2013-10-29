@@ -1,7 +1,7 @@
 <form id="search_form" method="get" action="">
 	<ul>
 	{% for field in form %}
-	    <li class="{{ field.id_for_label }}">
+	    <li class="{{ field.name }}">
 	       {{ field.label_tag }} {{ field }}
            {{ field.errors }}
        </li>
