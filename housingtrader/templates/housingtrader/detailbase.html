@@ -17,7 +17,7 @@
 	<li>Antal rum: {{ listing.get_o_rooms_display}}</li>
 	<li>Hyra/Avgift: {{ listing.o_rent}}</li>
 	<li>Våning: {{ listing.o_floor_no}}</li>
-	<li>Blivande bostadsrätt: {{ listing.get_o_brf_status_display }}</li>
+	<li>{{ listing.get_o_brf_status_display }}</li>
 	<li>Öppen spis/Kakelugn: {{ listing.o_has_fireplace|yesno:"Ja,Nej" }}</li>
 	<li>Balkong: {{ listing.o_has_balcony|yesno:"Ja,Nej" }}</li>
 	<li>Hiss: {{ listing.o_has_elevator|yesno:"Ja,Nej" }}</li>
