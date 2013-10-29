@@ -1,5 +1,7 @@
 {% extends "housingtrader/housingtrader_base.html" %}
 
+{% load staticfiles %}
+
 {% block page_header %}Välkommen {{ user.first_name }}!{% endblock %}
 
 {% block main %}
@@ -20,8 +22,16 @@
 		{% for listing in listings %}
 			<tr>
 				<td><a href="{% url 'housingtrader:preview' listing.id %}">{{ listing }}</td>
-				<td><a href="{% url 'housingtrader:edit_listing' listing.id %}">.</a></td>
-				<td><a href="{% url 'housingtrader:find_trades' listing.id %}">.</a></td>
+				<td>
+					<a href="{% url 'housingtrader:edit_listing' listing.id %}">
+						<img src="{% static 'housingtrader/img/edit.png' %}"
+					</a>
+				</td>
+				<td>
+					<a href="{% url 'housingtrader:find_trades' listing.id %}">
+						<img src="{% static 'housingtrader/img/search.png' %}"
+					</a>
+				</td>
 				<td>
 					<form action="{% url 'housingtrader:change_published_state' listing.id %}" method='post'>
 						{% csrf_token %}
