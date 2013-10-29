@@ -75,9 +75,9 @@ class Listing(models.Model):
     o_postal_code = models.CharField(max_length=255, verbose_name='Postnummer')
     o_postal_town = models.CharField(max_length=255, verbose_name='Postort')
     o_rooms = models.PositiveIntegerField(choices=rooms_choices, verbose_name='Antal rum') # The number of rooms times 2, to avoid having to use floats or decimals
-    o_area = models.PositiveIntegerField(verbose_name='Yta') # area in square meters
+    o_area = models.PositiveIntegerField(verbose_name='Yta', help_text='kvm') # area in square meters
     o_type = models.PositiveIntegerField(choices=HOUSING_TYPE_CHOICES, verbose_name='Bostadstyp')
-    o_rent = models.PositiveIntegerField(verbose_name = 'Hyra/Avgift')
+    o_rent = models.PositiveIntegerField(verbose_name = 'Hyra/Avgift', help_text='kr/mån')
     o_description = models.TextField(verbose_name='Beskrivning')
     o_brf_status = models.PositiveIntegerField(choices=BRF_STATUS_CHOICES, verbose_name='Om hyresrätt, är det blivande bostadsrätt?', null=True, blank=True)
     o_floor_no = models.IntegerField(verbose_name='Våning')
@@ -87,8 +87,8 @@ class Listing(models.Model):
     
     w_county = CharField(max_length=255, verbose_name='Län', choices=COUNTY_CHOICES)
     w_min_rooms = models.PositiveIntegerField(choices=rooms_choices, verbose_name='Minsta antal rum')
-    w_min_area = models.PositiveIntegerField(verbose_name='Minsta yta') # area in square meters
-    w_max_rent = models.PositiveIntegerField(verbose_name='Max hyra')
+    w_min_area = models.PositiveIntegerField(verbose_name='Minsta yta', help_text='kvm') # area in square meters
+    w_max_rent = models.PositiveIntegerField(verbose_name='Max hyra', help_text='kr/mån')
     w_types = models.CommaSeparatedIntegerField(max_length=255, verbose_name='Önskade bostadstyper')
     w_brf_status = models.PositiveIntegerField(choices=BRF_WANTED_STATUS_CHOICES, verbose_name='Blivande bostadsrätt?', null=True, blank=True)
     w_has_fireplace = models.BooleanField(verbose_name='Öppen spis')
