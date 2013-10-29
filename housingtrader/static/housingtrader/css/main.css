@@ -1,0 +1,39 @@
+#search_form {
+	font-size: 10px;
+}
+
+#search_form ul {
+	display: inline;
+	list-style-type: none;
+	padding-left: 0;
+}
+
+#search_form ul.errorlist {
+	list-style-type: disc;
+	padding-left: 10px;
+}
+
+#search_form ul.errorlist li {
+	display: inline;
+	color: red;
+}
+
+#search_form select {
+	font-size: 10px;
+}
+
+#search_form ul > li {
+	margin: 15px 0;
+}
+
+#search_form li.id_text input {
+	width: 400px;
+}
+
+#search_form li.id_text label {
+	display: block;
+}
+
+#search_form li.id_types_0 li {
+	display: inline;
+}

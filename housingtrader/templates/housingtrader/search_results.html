@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{% extends "housingtrader/housingtrader_base.html" %}
 
 {% block page_header %} Välkommen till Housingtrader {% endblock %}
 
 {% block main %}
-
+<h2>Sök bland bostadsannonser:</h2>
 {% include "housingtrader/search_form.html" %}
 
 {% if results %}

@@ -1,6 +1,11 @@
-<form method="get" action="">
+<form id="search_form" method="get" action="">
 	<ul>
-		{{ form.as_ul }}
-		<li><input type="submit" name="submit" value="Sök"/></li>
+	{% for field in form %}
+	    <li class="{{ field.id_for_label }}">
+	       {{ field.label_tag }} {{ field }}
+           {{ field.errors }}
+       </li>
+	{% endfor %}
+	   <li class="submit"><input type="submit" name="submit" value="Sök" /></li>
 	</ul>
 </form>
