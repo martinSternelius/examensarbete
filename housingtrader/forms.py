@@ -2,7 +2,7 @@
 from django.forms import Form, ModelForm, MultipleChoiceField, CharField, IntegerField, ChoiceField
 from django.forms.widgets import CheckboxSelectMultiple
 from housingtrader.models import Listing, HOUSING_TYPE_CHOICES, FLOOR_CHOICES, get_listing_fields_by_prefix
-from django.contrib.localflavor.se.forms import SEPostalCodeField, SECountySelect
+from localflavor.se.forms import SEPostalCodeField, SECountySelect
 
 def get_wanted_fields():
     '''

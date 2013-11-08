@@ -2,7 +2,7 @@
 from django.db import models
 from django.db.models.fields import CharField
 from examensarbete.settings import AUTH_USER_MODEL
-from django.contrib.localflavor.se.se_counties import COUNTY_CHOICES
+from localflavor.se.forms import COUNTY_CHOICES
 import re
 
 def generate_rooms_choices(max_rooms_choice):
