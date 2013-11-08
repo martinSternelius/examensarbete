@@ -214,4 +214,9 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 
+#############
+## Komodo edit
+#############
+*.komodoproject
+
 examensarbete/localsettings.py
